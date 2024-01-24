@@ -10,7 +10,9 @@ const defaultTirestinos: tirestinos.Tirestino[] = [
   tirestinos.sBlock,
   tirestinos.tBlock,
   tirestinos.zBlock,
-].sort((a, b) => a.id - b.id)
+].sort(
+  (a: tirestinos.Tirestino, b: tirestinos.Tirestino): number => a.id - b.id,
+)
 
 function lookupTirestino(id: number): tirestinos.Tirestino {
   return defaultTirestinos[id]
@@ -32,6 +34,7 @@ export interface Tirest {
   prevTime: DOMHighResTimeStamp
   prevInputTime: DOMHighResTimeStamp
   prevAutoFallTime: DOMHighResTimeStamp
+  hasManuallyDropped: boolean
 }
 
 const fieldSize: { width: number; height: number } = {
@@ -84,7 +87,34 @@ export function getNew(): Tirest {
     prevTime: 0,
     prevInputTime: -INPUT_DELAY_MS,
     prevAutoFallTime: 0,
+    hasManuallyDropped: false,
   }
+}
+
+function checkBounds(
+  tirest: Tirest,
+  tirestino: tirestinos.Tirestino,
+  field: Uint8Array,
+  offset: Partial<Position> = { x: 0, y: 0 },
+): boolean {
+  for (let i: number = 0; i < tirestino.data.length; i++) {
+    if (
+      tirestino.data[i] &&
+      field[
+        fieldSize.width *
+          (tirest.droppingFrom.y +
+            Math.floor(i / tirestino.size.width) +
+            (offset.y ?? 0)) +
+          tirest.droppingFrom.x +
+          (i % tirestino.size.width) +
+          (offset.x ?? 0)
+      ]
+    ) {
+      return true
+    }
+  }
+
+  return false
 }
 
 export function poll(
@@ -100,51 +130,59 @@ export function poll(
     tirest.currentTirestinoId,
   )
 
+  if (!keysPressed.Space) tirest.hasManuallyDropped = false
+
   if (
     elapsedInputTime > INPUT_DELAY_MS &&
-    keysPressed.ArrowLeft !== keysPressed.ArrowRight
+    (keysPressed.ArrowLeft !== keysPressed.ArrowRight || keysPressed.Space)
   ) {
-    if (keysPressed.ArrowLeft) {
-      const boundingX: number = tirest.droppingFrom.x - 1
-      let wouldOverlap: boolean = boundingX < 0
+    if (keysPressed.Space && !tirest.hasManuallyDropped) {
+      tirest.hasManuallyDropped = true
+      let dropToY: number = tirest.droppingFrom.y
 
-      for (let i: number = 0; i < tirestino.data.length && !wouldOverlap; i++) {
-        if (
-          tirestino.data[i] &&
-          field[
-            fieldSize.width *
-              (tirest.droppingFrom.y + Math.floor(i / tirestino.size.width)) +
-              tirest.droppingFrom.x +
-              (i % tirestino.size.width) -
-              1
-          ]
-        ) {
-          wouldOverlap = true
+      for (
+        let i = 1;
+        i <
+        fieldSize.height - tirestino.size.height - tirest.droppingFrom.y + 1;
+        i++
+      ) {
+        if (checkBounds(tirest, tirestino, field, { y: i })) {
+          break
         }
+
+        dropToY++
       }
+
+      for (let i = 0; i < tirestino.data.length; i++) {
+        if (!tirestino.data[i]) continue
+
+        field[
+          fieldSize.width * (dropToY + Math.floor(i / tirestino.size.width)) +
+            tirest.droppingFrom.x +
+            (i % tirestino.size.width)
+        ] = tirestino.data[i]
+      }
+
+      tirest.currentTirestinoId = Math.floor(
+        Math.random() * defaultTirestinos.length,
+      )
+      tirest.droppingFrom = {
+        x: Math.floor(fieldSize.width / 2),
+        y: 0,
+      }
+    } else if (keysPressed.ArrowLeft) {
+      const boundingX: number = tirest.droppingFrom.x - 1
+      const wouldOverlap: boolean =
+        boundingX < 0 || checkBounds(tirest, tirestino, field, { x: -1 })
 
       if (!wouldOverlap) {
         tirest.droppingFrom.x = tirest.droppingFrom.x - 1
       }
     } else if (keysPressed.ArrowRight) {
       const boundingX: number = tirest.droppingFrom.x + 1
-      let wouldOverlap: boolean =
-        boundingX > fieldSize.width - tirestino.size.width
-
-      for (let i: number = 0; i < tirestino.data.length && !wouldOverlap; i++) {
-        if (
-          tirestino.data[i] &&
-          field[
-            fieldSize.width *
-              (tirest.droppingFrom.y + Math.floor(i / tirestino.size.width)) +
-              tirest.droppingFrom.x +
-              (i % tirestino.size.width) +
-              1
-          ]
-        ) {
-          wouldOverlap = true
-        }
-      }
+      const wouldOverlap: boolean =
+        boundingX > fieldSize.width - tirestino.size.width ||
+        checkBounds(tirest, tirestino, field, { x: 1 })
 
       if (!wouldOverlap) {
         tirest.droppingFrom.x = tirest.droppingFrom.x + 1
@@ -160,25 +198,33 @@ export function poll(
   ) {
     const boundingY: number = tirest.droppingFrom.y + tirestino.size.height
 
-    let wouldOverlap: boolean = boundingY > fieldSize.height - 1
-
-    for (let i: number = 0; i < tirestino.data.length && !wouldOverlap; i++) {
-      if (
-        tirestino.data[i] &&
-        field[
-          fieldSize.width *
-            (tirest.droppingFrom.y + Math.floor(i / tirestino.size.width) + 1) +
-            tirest.droppingFrom.x +
-            (i % tirestino.size.width)
-        ]
-      ) {
-        wouldOverlap = true
-      }
-    }
+    const wouldOverlap: boolean =
+      boundingY > fieldSize.height - 1 ||
+      checkBounds(tirest, tirestino, field, { y: 1 })
 
     if (!wouldOverlap) tirest.droppingFrom.y = tirest.droppingFrom.y + 1
 
     tirest.prevAutoFallTime = time
+  }
+
+  for (let y: number = fieldSize.height - 1; y >= 0; y--) {
+    let shouldClear: boolean = true
+
+    for (let x: number = 0; x < fieldSize.width; x++) {
+      if (!field[fieldSize.width * y + x]) {
+        shouldClear = false
+        break
+      }
+    }
+
+    if (shouldClear) {
+      for (let yy: number = y; yy >= 0; yy--) {
+        for (let x: number = 0; x < fieldSize.width; x++) {
+          field[fieldSize.width * yy + x] =
+            yy === 0 ? 0 : field[fieldSize.width * (yy - 1) + x]
+        }
+      }
+    }
   }
 
   tirest.prevTime = time
