@@ -10,7 +10,9 @@ const defaultTirestinos: tirestinos.Tirestino[] = [
   tirestinos.sBlock,
   tirestinos.tBlock,
   tirestinos.zBlock,
-].sort((a, b) => a.id - b.id)
+].sort(
+  (a: tirestinos.Tirestino, b: tirestinos.Tirestino): number => a.id - b.id,
+)
 
 function lookupTirestino(id: number): tirestinos.Tirestino {
   return defaultTirestinos[id]
@@ -32,6 +34,7 @@ export interface Tirest {
   prevTime: DOMHighResTimeStamp
   prevInputTime: DOMHighResTimeStamp
   prevAutoFallTime: DOMHighResTimeStamp
+  hasManuallyDropped: boolean
 }
 
 const fieldSize: { width: number; height: number } = {
@@ -84,6 +87,7 @@ export function getNew(): Tirest {
     prevTime: 0,
     prevInputTime: -INPUT_DELAY_MS,
     prevAutoFallTime: 0,
+    hasManuallyDropped: false,
   }
 }
 
@@ -126,10 +130,47 @@ export function poll(
     tirest.currentTirestinoId,
   )
 
+  if (!keysPressed.Space) tirest.hasManuallyDropped = false
+
   if (
     elapsedInputTime > INPUT_DELAY_MS &&
-    keysPressed.ArrowLeft !== keysPressed.ArrowRight
+    (keysPressed.ArrowLeft !== keysPressed.ArrowRight || keysPressed.Space)
   ) {
+    if (keysPressed.Space && !tirest.hasManuallyDropped) {
+      tirest.hasManuallyDropped = true
+      let dropToY: number = tirest.droppingFrom.y
+
+      for (
+        let i = 1;
+        i <
+        fieldSize.height - tirestino.size.height - tirest.droppingFrom.y + 1;
+        i++
+      ) {
+        if (checkBounds(tirest, tirestino, field, { y: i })) {
+          break
+        }
+
+        dropToY++
+      }
+
+      for (let i = 0; i < tirestino.data.length; i++) {
+        if (!tirestino.data[i]) continue
+
+        field[
+          fieldSize.width * (dropToY + Math.floor(i / tirestino.size.width)) +
+            tirest.droppingFrom.x +
+            (i % tirestino.size.width)
+        ] = tirestino.data[i]
+      }
+
+      tirest.currentTirestinoId = Math.floor(
+        Math.random() * defaultTirestinos.length,
+      )
+      tirest.droppingFrom = {
+        x: Math.floor(fieldSize.width / 2),
+        y: 0,
+      }
+    } else if (keysPressed.ArrowLeft) {
       const boundingX: number = tirest.droppingFrom.x - 1
       const wouldOverlap: boolean =
         boundingX < 0 || checkBounds(tirest, tirestino, field, { x: -1 })
