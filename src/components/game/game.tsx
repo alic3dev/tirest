@@ -60,7 +60,7 @@ export const Game = component$(() => {
     }
     animationFrameHandle = window.requestAnimationFrame(animationFrame)
 
-    cleanup(() => window.cancelAnimationFrame(animationFrameHandle))
+    cleanup((): void => window.cancelAnimationFrame(animationFrameHandle))
   })
 
   return (
