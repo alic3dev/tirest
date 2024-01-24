@@ -207,6 +207,26 @@ export function poll(
     tirest.prevAutoFallTime = time
   }
 
+  for (let y: number = fieldSize.height - 1; y >= 0; y--) {
+    let shouldClear: boolean = true
+
+    for (let x: number = 0; x < fieldSize.width; x++) {
+      if (!field[fieldSize.width * y + x]) {
+        shouldClear = false
+        break
+      }
+    }
+
+    if (shouldClear) {
+      for (let yy: number = y; yy >= 0; yy--) {
+        for (let x: number = 0; x < fieldSize.width; x++) {
+          field[fieldSize.width * yy + x] =
+            yy === 0 ? 0 : field[fieldSize.width * (yy - 1) + x]
+        }
+      }
+    }
+  }
+
   tirest.prevTime = time
 }
 
