@@ -17,6 +17,7 @@ etc
 external
 node_modules
 temp
+tmp
 tsc-out
 tsdoc-metadata.json
 target
