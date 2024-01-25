@@ -93,27 +93,13 @@ function generateNewField(): UUID {
 }
 
 function lookupField(tirest: Tirest): Uint8Array {
-  let field: Uint8Array | undefined = fieldLookup[tirest.fieldId]
+  const field: Uint8Array | undefined = fieldLookup[tirest.fieldId]
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!field) {
     tirest.fieldId = generateNewField() // FIXME: SSR issues - this shouldn't be neccesary
-    field = fieldLookup[tirest.fieldId]
 
-    // field[fieldSize.width * 19 + 3] = 1
-    // field[fieldSize.width * 19 + 4] = 1
-    // field[fieldSize.width * 19 + 5] = 1
-    // field[fieldSize.width * 18 + 4] = 1
-
-    // field[fieldSize.width * 19 + 0] = 3
-    // field[fieldSize.width * 19 + 1] = 3
-    // field[fieldSize.width * 18 + 0] = 3
-    // field[fieldSize.width * 17 + 0] = 3
-
-    // field[fieldSize.width * 17 + 3] = 2
-    // field[fieldSize.width * 17 + 4] = 2
-    // field[fieldSize.width * 16 + 3] = 2
-    // field[fieldSize.width * 16 + 4] = 2
+    return lookupField(tirest)
   }
 
   return field
