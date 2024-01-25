@@ -1,34 +1,21 @@
 import type { UUID } from 'crypto'
 
+import type { Tirestino } from './tirestino'
+import { defaultTirestinos, defaultTirestinosWithRotations } from './tirestino'
+
 import * as colorPalettes from './colorPalettes'
-import * as tirestinos from './tirestino'
 
 const selectedColorPalette: colorPalettes.ColorPalette = colorPalettes.standard
 
-const defaultTirestinos: tirestinos.Tirestino[] = [
-  tirestinos.iBlock,
-  tirestinos.lBlock,
-  tirestinos.oBlock,
-  tirestinos.rBlock,
-  tirestinos.sBlock,
-  tirestinos.tBlock,
-  tirestinos.zBlock,
-].sort(
-  (a: tirestinos.Tirestino, b: tirestinos.Tirestino): number => a.id - b.id,
-)
-
-function lookupTirestino(id: number): tirestinos.Tirestino {
-  return defaultTirestinos[id]
+function lookupTirestino(id: number): Tirestino {
+  return defaultTirestinosWithRotations[id]
 }
 
-const tirestinoQueues: Record<UUID, tirestinos.Tirestino[]> = {}
+const tirestinoQueues: Record<UUID, Tirestino[]> = {}
 
 function generateNewTirestinoQueue(): UUID {
-  const blankQueue: tirestinos.Tirestino[] = [
-    ...defaultTirestinos,
-    ...defaultTirestinos,
-  ]
-  const randomQueue: tirestinos.Tirestino[] = []
+  const blankQueue: Tirestino[] = [...defaultTirestinos, ...defaultTirestinos]
+  const randomQueue: Tirestino[] = []
 
   while (blankQueue.length) {
     randomQueue.push(
@@ -45,8 +32,8 @@ function generateNewTirestinoQueue(): UUID {
   return tirestinoQueueId
 }
 
-function lookupTirestinoQueue(tirest: Tirest): tirestinos.Tirestino[] {
-  const tirestinoQueue: tirestinos.Tirestino[] | undefined =
+function lookupTirestinoQueue(tirest: Tirest): Tirestino[] {
+  const tirestinoQueue: Tirestino[] | undefined =
     tirestinoQueues[tirest.tirestinoQueueId]
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -75,6 +62,7 @@ export interface Tirest {
   prevInputTime: DOMHighResTimeStamp
   prevAutoFallTime: DOMHighResTimeStamp
   hasManuallyDropped: boolean
+  hasRotated: boolean
   tirestinoQueueId: UUID
 }
 
@@ -115,13 +103,14 @@ export function getNew(): Tirest {
     prevInputTime: -INPUT_DELAY_MS,
     prevAutoFallTime: 0,
     hasManuallyDropped: false,
+    hasRotated: false,
     tirestinoQueueId: generateNewTirestinoQueue(),
   }
 }
 
 function checkBounds(
   tirest: Tirest,
-  tirestino: tirestinos.Tirestino,
+  tirestino: Tirestino,
   field: Uint8Array,
   offset: Partial<Position> = { x: 0, y: 0 },
 ): boolean {
@@ -151,7 +140,7 @@ export function poll(
   keysPressed: Record<string, boolean>,
 ): void {
   if (tirest.currentTirestinoId === null) {
-    const tirestinoQueue: tirestinos.Tirestino[] = lookupTirestinoQueue(tirest)
+    const tirestinoQueue: Tirestino[] = lookupTirestinoQueue(tirest)
     tirest.currentTirestinoId = tirestinoQueue.pop()!.id
 
     if (!tirestinoQueue.length) {
@@ -163,56 +152,69 @@ export function poll(
 
   const elapsedInputTime: number = time - tirest.prevInputTime
 
-  const tirestino: tirestinos.Tirestino = lookupTirestino(
-    tirest.currentTirestinoId,
-  )
+  let tirestino: Tirestino = lookupTirestino(tirest.currentTirestinoId)
 
   if (!keysPressed.Space) tirest.hasManuallyDropped = false
+  if (!keysPressed.ArrowUp && !keysPressed.KeyZ) tirest.hasRotated = false
 
-  if (
+  if (keysPressed.Space && !tirest.hasManuallyDropped) {
+    tirest.hasManuallyDropped = true
+    let dropToY: number = tirest.droppingFrom.y
+
+    for (
+      let i = 1;
+      i < fieldSize.height - tirestino.size.height - tirest.droppingFrom.y + 1;
+      i++
+    ) {
+      if (checkBounds(tirest, tirestino, field, { y: i })) {
+        break
+      }
+
+      dropToY++
+    }
+
+    for (let i = 0; i < tirestino.data.length; i++) {
+      if (!tirestino.data[i]) continue
+
+      field[
+        fieldSize.width * (dropToY + Math.floor(i / tirestino.size.width)) +
+          tirest.droppingFrom.x +
+          (i % tirestino.size.width)
+      ] = tirestino.data[i]
+    }
+
+    const tirestinoQueue: Tirestino[] = lookupTirestinoQueue(tirest)
+    tirest.currentTirestinoId = tirestinoQueue.pop()!.id
+
+    if (!tirestinoQueue.length) {
+      tirest.tirestinoQueueId = generateNewTirestinoQueue()
+    }
+
+    tirest.droppingFrom = {
+      x: Math.floor(fieldSize.width / 2),
+      y: 0,
+    }
+  } else if (
+    (keysPressed.ArrowUp || keysPressed.KeyZ) &&
+    !tirest.hasRotated &&
+    typeof tirestino.rotateLeftId !== 'undefined' &&
+    typeof tirestino.rotateRightId !== 'undefined'
+  ) {
+    const rotatedTirestino: Tirestino = lookupTirestino(
+      keysPressed.ArrowUp ? tirestino.rotateRightId : tirestino.rotateLeftId,
+    )
+
+    if (!checkBounds(tirest, rotatedTirestino, field)) {
+      tirestino = rotatedTirestino
+      tirest.currentTirestinoId = tirestino.id
+    }
+
+    tirest.hasRotated = true
+  } else if (
     elapsedInputTime > INPUT_DELAY_MS &&
     (keysPressed.ArrowLeft !== keysPressed.ArrowRight || keysPressed.Space)
   ) {
-    if (keysPressed.Space && !tirest.hasManuallyDropped) {
-      tirest.hasManuallyDropped = true
-      let dropToY: number = tirest.droppingFrom.y
-
-      for (
-        let i = 1;
-        i <
-        fieldSize.height - tirestino.size.height - tirest.droppingFrom.y + 1;
-        i++
-      ) {
-        if (checkBounds(tirest, tirestino, field, { y: i })) {
-          break
-        }
-
-        dropToY++
-      }
-
-      for (let i = 0; i < tirestino.data.length; i++) {
-        if (!tirestino.data[i]) continue
-
-        field[
-          fieldSize.width * (dropToY + Math.floor(i / tirestino.size.width)) +
-            tirest.droppingFrom.x +
-            (i % tirestino.size.width)
-        ] = tirestino.data[i]
-      }
-
-      const tirestinoQueue: tirestinos.Tirestino[] =
-        lookupTirestinoQueue(tirest)
-      tirest.currentTirestinoId = tirestinoQueue.pop()!.id
-
-      if (!tirestinoQueue.length) {
-        tirest.tirestinoQueueId = generateNewTirestinoQueue()
-      }
-
-      tirest.droppingFrom = {
-        x: Math.floor(fieldSize.width / 2),
-        y: 0,
-      }
-    } else if (keysPressed.ArrowLeft) {
+    if (keysPressed.ArrowLeft) {
       const boundingX: number = tirest.droppingFrom.x - 1
       const wouldOverlap: boolean =
         boundingX < 0 || checkBounds(tirest, tirestino, field, { x: -1 })
@@ -337,8 +339,7 @@ function _drawField(
     })
   }
 
-  const tirestino: tirestinos.Tirestino =
-    defaultTirestinos[tirest.currentTirestinoId!]
+  const tirestino: Tirestino = lookupTirestino(tirest.currentTirestinoId!)
 
   for (let i: number = 0; i < tirestino.data.length; i++) {
     if (!tirestino.data[i]) continue
@@ -353,7 +354,7 @@ function _drawField(
 }
 
 function _drawPreviewWindow(
-  _blockToDraw: tirestinos.Tirestino,
+  _blockToDraw: Tirestino,
   ctx: CanvasRenderingContext2D,
 ): void {
   _blockToDraw
@@ -390,7 +391,7 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
   ctx.strokeStyle = '#000000'
   ctx.strokeRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-  const tirestinoQueue: tirestinos.Tirestino[] = lookupTirestinoQueue(tirest)
+  const tirestinoQueue: Tirestino[] = lookupTirestinoQueue(tirest)
 
   _drawField(tirest, field, ctx)
   _drawPreviewWindow(tirestinoQueue[tirestinoQueue.length - 1], ctx)
