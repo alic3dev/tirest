@@ -21,6 +21,43 @@ function lookupTirestino(id: number): tirestinos.Tirestino {
   return defaultTirestinos[id]
 }
 
+const tirestinoQueues: Record<UUID, tirestinos.Tirestino[]> = {}
+
+function generateNewTirestinoQueue(): UUID {
+  const blankQueue: tirestinos.Tirestino[] = [
+    ...defaultTirestinos,
+    ...defaultTirestinos,
+  ]
+  const randomQueue: tirestinos.Tirestino[] = []
+
+  while (blankQueue.length) {
+    randomQueue.push(
+      ...blankQueue.splice(
+        Math.floor(Math.random() * blankQueue.length - 1),
+        1,
+      ),
+    )
+  }
+
+  const tirestinoQueueId: UUID = crypto.randomUUID()
+  tirestinoQueues[tirestinoQueueId] = randomQueue
+
+  return tirestinoQueueId
+}
+
+function lookupTirestinoQueue(tirest: Tirest): tirestinos.Tirestino[] {
+  const tirestinoQueue: tirestinos.Tirestino[] | undefined =
+    tirestinoQueues[tirest.tirestinoQueueId]
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!tirestinoQueue) {
+    tirest.tirestinoQueueId = generateNewTirestinoQueue()
+    return lookupTirestinoQueue(tirest)
+  }
+
+  return tirestinoQueue
+}
+
 const INPUT_DELAY_MS: number = 45
 const AUTO_FALL_MS: number = 1000
 
@@ -32,12 +69,13 @@ interface Position {
 export interface Tirest {
   score: number
   fieldId: UUID
-  currentTirestinoId: number
+  currentTirestinoId: number | null
   droppingFrom: Position
   prevTime: DOMHighResTimeStamp
   prevInputTime: DOMHighResTimeStamp
   prevAutoFallTime: DOMHighResTimeStamp
   hasManuallyDropped: boolean
+  tirestinoQueueId: UUID
 }
 
 const fieldSize: { width: number; height: number } = {
@@ -85,12 +123,13 @@ export function getNew(): Tirest {
   return {
     score: 0,
     fieldId: generateNewField(),
-    currentTirestinoId: Math.floor(Math.random() * defaultTirestinos.length),
+    currentTirestinoId: null,
     droppingFrom: { x: Math.round(fieldSize.width / 2), y: 0 },
     prevTime: 0,
     prevInputTime: -INPUT_DELAY_MS,
     prevAutoFallTime: 0,
     hasManuallyDropped: false,
+    tirestinoQueueId: generateNewTirestinoQueue(),
   }
 }
 
@@ -125,6 +164,15 @@ export function poll(
   tirest: Tirest,
   keysPressed: Record<string, boolean>,
 ): void {
+  if (tirest.currentTirestinoId === null) {
+    const tirestinoQueue: tirestinos.Tirestino[] = lookupTirestinoQueue(tirest)
+    tirest.currentTirestinoId = tirestinoQueue.pop()!.id
+
+    if (!tirestinoQueue.length) {
+      tirest.tirestinoQueueId = generateNewTirestinoQueue()
+    }
+  }
+
   const field: Uint8Array = lookupField(tirest)
 
   const elapsedInputTime: number = time - tirest.prevInputTime
@@ -166,9 +214,14 @@ export function poll(
         ] = tirestino.data[i]
       }
 
-      tirest.currentTirestinoId = Math.floor(
-        Math.random() * defaultTirestinos.length,
-      )
+      const tirestinoQueue: tirestinos.Tirestino[] =
+        lookupTirestinoQueue(tirest)
+      tirest.currentTirestinoId = tirestinoQueue.pop()!.id
+
+      if (!tirestinoQueue.length) {
+        tirest.tirestinoQueueId = generateNewTirestinoQueue()
+      }
+
       tirest.droppingFrom = {
         x: Math.floor(fieldSize.width / 2),
         y: 0,
@@ -299,7 +352,7 @@ function _drawField(
   }
 
   const tirestino: tirestinos.Tirestino =
-    defaultTirestinos[tirest.currentTirestinoId]
+    defaultTirestinos[tirest.currentTirestinoId!]
 
   for (let i: number = 0; i < tirestino.data.length; i++) {
     if (!tirestino.data[i]) continue
@@ -314,10 +367,12 @@ function _drawField(
 }
 
 function _drawPreviewWindow(
-  _blockToDraw: undefined,
+  _blockToDraw: tirestinos.Tirestino,
   ctx: CanvasRenderingContext2D,
 ): void {
   _blockToDraw
+
+  // TODO: Actually draw the next block here
 
   const previewWindowSize: number = ctx.canvas.width * 0.25
 
@@ -349,8 +404,10 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
   ctx.strokeStyle = '#000000'
   ctx.strokeRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
+  const tirestinoQueue: tirestinos.Tirestino[] = lookupTirestinoQueue(tirest)
+
   _drawField(tirest, field, ctx)
-  _drawPreviewWindow(undefined, ctx)
+  _drawPreviewWindow(tirestinoQueue[tirestinoQueue.length - 1], ctx)
 
   // ctx.textAlign = 'right'
   // ctx.textBaseline = 'bottom'
