@@ -1,6 +1,9 @@
 import type { UUID } from 'crypto'
 
+import * as colorPalettes from './colorPalettes'
 import * as tirestinos from './tirestino'
+
+const selectedColorPalette: colorPalettes.ColorPalette = colorPalettes.standard
 
 const defaultTirestinos: tirestinos.Tirestino[] = [
   tirestinos.iBlock,
@@ -269,39 +272,11 @@ function _drawField(
   ctx.lineWidth = 4
 
   const _drawBlock = (data: number, position: Position): void => {
-    switch (data) {
-      case 1:
-        ctx.fillStyle = '#0FF'
-        ctx.strokeStyle = '#099'
-        break
-      case 2:
-        ctx.fillStyle = '#FF0'
-        ctx.strokeStyle = '#990'
-        break
-      case 3:
-        ctx.fillStyle = '#0F0'
-        ctx.strokeStyle = '#090'
-        break
-      case 4:
-        ctx.fillStyle = '#F00'
-        ctx.strokeStyle = '#090'
-        break
-      case 5:
-        ctx.fillStyle = '#AF0'
-        ctx.strokeStyle = '#090'
-        break
-      case 6:
-        ctx.fillStyle = '#0FA'
-        ctx.strokeStyle = '#090'
-        break
-      case 7:
-        ctx.fillStyle = '#AA0'
-        ctx.strokeStyle = '#090'
-        break
-      default:
-        ctx.fillStyle = '#FFFFFF'
-        ctx.strokeStyle = '#999999'
-    }
+    const [fillColor, strokeColor]: [string, string] = selectedColorPalette
+      .blocks[data - 1] ?? ['#FFFFFF', '#999999']
+
+    ctx.fillStyle = fillColor
+    ctx.strokeStyle = strokeColor
 
     ctx.beginPath()
     ctx.rect(
