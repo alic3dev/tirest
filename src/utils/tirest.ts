@@ -64,6 +64,7 @@ export interface Tirest {
   hasManuallyDropped: boolean
   hasRotated: boolean
   tirestinoQueueId: UUID
+  heldTirestinoId: number | null
 }
 
 const fieldSize: { width: number; height: number } = {
@@ -105,6 +106,7 @@ export function getNew(): Tirest {
     hasManuallyDropped: false,
     hasRotated: false,
     tirestinoQueueId: generateNewTirestinoQueue(),
+    heldTirestinoId: null,
   }
 }
 
@@ -354,29 +356,122 @@ function _drawField(
 }
 
 function _drawPreviewWindow(
-  _blockToDraw: Tirestino,
+  blockToDraw: Tirestino,
   ctx: CanvasRenderingContext2D,
 ): void {
-  _blockToDraw
-
   // TODO: Actually draw the next block here
 
   const previewWindowSize: number = ctx.canvas.width * 0.25
+
+  const previewWindowPosition: Position = {
+    x: ctx.canvas.width - ctx.canvas.width * 0.05 - previewWindowSize,
+    y:
+      ctx.canvas.height -
+      ctx.canvas.width * 0.6 * (fieldSize.height / fieldSize.width) -
+      ctx.canvas.width * 0.05,
+  }
 
   ctx.fillStyle = '#00000010'
   ctx.strokeStyle = '#000000'
 
   ctx.beginPath()
   ctx.rect(
-    ctx.canvas.width - ctx.canvas.width * 0.05 - previewWindowSize,
-    ctx.canvas.height -
-      ctx.canvas.width * 0.6 * (fieldSize.height / fieldSize.width) -
-      ctx.canvas.width * 0.05,
+    previewWindowPosition.x,
+    previewWindowPosition.y,
     previewWindowSize,
     previewWindowSize,
   )
   ctx.stroke()
   ctx.fill()
+
+  const textSize: number = 36
+
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+  ctx.font = `bold ${textSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont`
+
+  ctx.fillStyle = '#FFFFFFAA'
+  ctx.fillText(
+    `Up next`,
+    previewWindowPosition.x + previewWindowSize / 2,
+    previewWindowPosition.y + previewWindowSize + textSize / 2,
+  )
+}
+
+function _drawHoldingWindow(
+  blockToDraw: Tirestino | null,
+  ctx: CanvasRenderingContext2D,
+): void {
+  const holdingWindowSize: number = ctx.canvas.width * 0.25
+  const textSize: number = 36
+
+  const holdingWindowPosition: Position = {
+    x: ctx.canvas.width - ctx.canvas.width * 0.05 - holdingWindowSize,
+    y:
+      ctx.canvas.height -
+      ctx.canvas.width * 0.6 * (fieldSize.height / fieldSize.width) -
+      ctx.canvas.width * 0.05 +
+      textSize * 4 +
+      holdingWindowSize,
+  }
+
+  ctx.fillStyle = '#00000010'
+  ctx.strokeStyle = '#000000'
+
+  ctx.beginPath()
+  ctx.rect(
+    holdingWindowPosition.x,
+    holdingWindowPosition.y,
+    holdingWindowSize,
+    holdingWindowSize,
+  )
+  ctx.stroke()
+  ctx.fill()
+
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+  ctx.font = `bold ${textSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont`
+
+  ctx.fillStyle = '#FFFFFFAA'
+  ctx.fillText(
+    `Held`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize / 2,
+  )
+
+  // TODO: Actually draw the next block here
+}
+
+function _drawScore(score: number, ctx: CanvasRenderingContext2D): void {
+  const holdingWindowSize: number = ctx.canvas.width * 0.25
+  const textSize: number = 36
+
+  const holdingWindowPosition: Position = {
+    x: ctx.canvas.width - ctx.canvas.width * 0.05 - holdingWindowSize,
+    y:
+      ctx.canvas.height -
+      ctx.canvas.width * 0.6 * (fieldSize.height / fieldSize.width) -
+      ctx.canvas.width * 0.05 +
+      textSize * 4 +
+      holdingWindowSize,
+  }
+
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+  ctx.font = `bold ${textSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont`
+
+  ctx.fillStyle = '#FFFFFFAA'
+  ctx.fillText(
+    `Score`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize * 8,
+  )
+
+  ctx.fillText(
+    `${score}`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize * 10,
+  )
 }
 
 export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
@@ -395,6 +490,11 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
 
   _drawField(tirest, field, ctx)
   _drawPreviewWindow(tirestinoQueue[tirestinoQueue.length - 1], ctx)
+  _drawHoldingWindow(
+    tirest.heldTirestinoId ? lookupTirestino(tirest.heldTirestinoId) : null,
+    ctx,
+  )
+  _drawScore(tirest.score, ctx)
 
   // ctx.textAlign = 'right'
   // ctx.textBaseline = 'bottom'
