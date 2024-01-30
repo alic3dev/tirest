@@ -1,0 +1,16 @@
+.wrapping-container {
+  background: var(--qwik-dark-background);
+
+  padding: 0;
+
+  border: none;
+  border-radius: 5px;
+
+  overflow: visible;
+}
+
+.with-backdrop::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+
+  backdrop-filter: blur(10px);
+}

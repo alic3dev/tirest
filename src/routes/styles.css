@@ -23,6 +23,15 @@ body {
   background: var(--qwik-dark-background);
   color: var(--qwik-dark-text);
   overflow-x: hidden;
+
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 
 /* HEADINGS ------------------------------------- */
@@ -135,6 +144,11 @@ button {
 a.button.button-dark,
 button.button-dark {
   background: var(--qwik-dirty-black);
+}
+
+a.button.button-danger,
+button.button-danger {
+  background: var(--danger-red);
 }
 
 a.button.button-small,

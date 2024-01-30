@@ -1,0 +1,31 @@
+.title {
+  text-align: center;
+}
+
+.hr {
+  width: 90%;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.login-button {
+  display: flex;
+  align-items: center;
+  margin: 1rem 2rem;
+
+  line-height: 12px;
+
+  & > img {
+    margin-right: 18px;
+  }
+
+  &.apple {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  &.google {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}
