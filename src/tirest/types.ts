@@ -10,6 +10,8 @@ export interface Size {
   height: number
 }
 
+export type GameState = 'Playing' | 'Paused' | 'GameOver'
+
 export interface Tirest {
   score: number
   fieldId: UUID
@@ -23,6 +25,7 @@ export interface Tirest {
   tirestinoQueueId: UUID
   heldTirestinoId: number | null
   hasHeld: boolean
+  gameState: GameState
 }
 
 export interface Tirestino {
