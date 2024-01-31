@@ -5,6 +5,7 @@ import type { Session } from '@auth/core/types'
 import { component$ } from '@builder.io/qwik'
 
 import styles from './index.module.scss'
+
 import { useAuthSignout } from '../plugin@auth'
 import { Container } from '~/components/Container'
 

@@ -1,13 +1,4 @@
-export interface Tirestino {
-  readonly id: number
-  readonly rotateLeftId: number
-  readonly rotateRightId: number
-  readonly size: {
-    readonly height: number
-    readonly width: number
-  }
-  readonly data: Uint8Array
-}
+import type { Tirestino } from './types'
 
 // .
 // .
@@ -302,3 +293,7 @@ export const defaultTirestinosWithRotations: Tirestino[] = [
   tirestinos.zBlock90Deg,
   tirestinos.sBlock90Deg,
 ].sort(sortTirestinosById)
+
+export function lookupTirestino(id: number): Tirestino {
+  return defaultTirestinosWithRotations[id]
+}

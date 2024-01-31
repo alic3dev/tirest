@@ -1,9 +1,14 @@
+import type { JSXOutput } from '@builder.io/qwik'
+
 import { component$, useSignal } from '@builder.io/qwik'
-import styles from './header.module.css'
+import { Link } from '@builder.io/qwik-city'
+
 import { LoginModal } from '~/components/modals/loginModal'
 import { useAuthSession, useAuthSignout } from '~/routes/plugin@auth'
 
-export default component$(() => {
+import styles from './header.module.css'
+
+export default component$((): JSXOutput => {
   const showLoginModal = useSignal<boolean>(false)
   const showRegisterModal = useSignal<boolean>(false)
 
@@ -13,22 +18,29 @@ export default component$(() => {
   return (
     <header class={styles.header}>
       <div class={['container', styles.wrapper]}>
-        <h3>Tirest</h3>
+        <h3>
+          <Link href="/">Tirest</Link>
+        </h3>
         <ul>
           <li>Leaderboards</li>
 
           {session.value ? (
-            <li>
-              <a
-                href="/signout"
-                preventdefault:click
-                onClick$={(): void => {
-                  signOut.submit({ callbackUrl: window.location.toString() })
-                }}
-              >
-                Sign out
-              </a>
-            </li>
+            <>
+              <li>
+                <Link href="/profile">Profile</Link>
+              </li>
+              <li>
+                <a
+                  href="/signout"
+                  preventdefault:click
+                  onClick$={(): void => {
+                    signOut.submit({ callbackUrl: window.location.toString() })
+                  }}
+                >
+                  Sign out
+                </a>
+              </li>
+            </>
           ) : (
             <>
               <li>

@@ -13,3 +13,5 @@ export const standard: ColorPalette = {
     ['#AA0', '#090'],
   ],
 }
+
+export const selectedColorPalette: ColorPalette = standard

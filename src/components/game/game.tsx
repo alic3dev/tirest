@@ -6,7 +6,7 @@ import {
   useStore,
   useVisibleTask$,
 } from '@builder.io/qwik'
-import * as tirestUtils from '~/utils/tirest'
+import * as tirestUtils from '~/tirest'
 
 import styles from './game.module.scss'
 
