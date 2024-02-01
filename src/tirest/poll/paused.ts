@@ -50,9 +50,11 @@ export function pollPaused(
         0,
       )
     } else if (keysPressed.ArrowLeft && !keysPressed.ArrowRight) {
-      if (menuItem.type === 'Numeric') menuItem.onDecrement(tirest)
+      if (menuItem.type === 'Numeric' || menuItem.type === 'List')
+        menuItem.onDecrement(tirest)
     } else if (!keysPressed.ArrowLeft && keysPressed.ArrowRight) {
-      if (menuItem.type === 'Numeric') menuItem.onIncrement(tirest)
+      if (menuItem.type === 'Numeric' || menuItem.type === 'List')
+        menuItem.onIncrement(tirest)
     }
 
     tirest.prevInputTime = time
