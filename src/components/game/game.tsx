@@ -1,3 +1,5 @@
+import type { Tirest } from '~/tirest/types'
+
 import {
   $,
   component$,
@@ -21,7 +23,7 @@ const CANVAS_RESOLUTION: Size = {
 }
 
 export const Game = component$(() => {
-  const tirest = useSignal<tirestUtils.Tirest>(tirestUtils.getNew())
+  const tirest = useSignal<Tirest>(tirestUtils.getNew())
   const canvasRef = useSignal<HTMLCanvasElement>()
   const keysPressed = useStore<Record<string, boolean>>({})
 
