@@ -16,12 +16,5 @@ export function generateNewField(): UUID {
 export function lookupField(tirest: Tirest): Uint8Array {
   const field: Uint8Array | undefined = fieldLookup[tirest.fieldId]
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!field) {
-    tirest.fieldId = generateNewField() // FIXME: SSR issues - this shouldn't be neccesary
-
-    return lookupField(tirest)
-  }
-
   return field
 }

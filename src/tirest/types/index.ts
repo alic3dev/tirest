@@ -12,6 +12,19 @@ export interface Size {
 
 export type GameState = 'Playing' | 'Paused' | 'GameOver'
 
+export interface ColorPalette {
+  name: string
+  blocks: [string, string][]
+}
+
+export interface Settings {
+  musicVolume: number
+
+  inputDelay: number
+
+  selectedColorPalette: ColorPalette
+}
+
 export interface Tirest {
   score: number
 
@@ -22,8 +35,6 @@ export interface Tirest {
   heldTirestinoId: number | null
 
   droppingFrom: Position
-
-  inputDelay: number
 
   prevTime: DOMHighResTimeStamp
   prevInputTime: DOMHighResTimeStamp
@@ -38,6 +49,8 @@ export interface Tirest {
   gameState: GameState
 
   selectedPauseMenuItem: number | null
+
+  settings: Settings
 }
 
 export interface Tirestino {
@@ -79,9 +92,9 @@ export interface MenuItemWithNumericValue extends BaseMenuItem {
 
 export interface MenuItemWithListValue extends BaseMenuItem {
   type: 'List'
-  getMin(tirest: Tirest): number | null
-  getMax(tirest: Tirest): number | null
-  getValue(tirest: Tirest): number
+  getMin(tirest: Tirest): string | null
+  getMax(tirest: Tirest): string | null
+  getValue(tirest: Tirest): string
   onDecrement(tirest: Tirest): void
   onIncrement(tirest: Tirest): void
 }

@@ -151,7 +151,7 @@ export function pollPlaying(
 
     tirest.hasRotated = true
   } else if (
-    elapsedInputTime > tirest.inputDelay &&
+    elapsedInputTime > tirest.settings.inputDelay &&
     (keysPressed.ArrowLeft !== keysPressed.ArrowRight ||
       keysPressed.Space ||
       keysPressed.ShiftLeft)

@@ -29,11 +29,5 @@ export function lookupTirestinoQueue(tirest: Tirest): Tirestino[] {
   const tirestinoQueue: Tirestino[] | undefined =
     tirestinoQueues[tirest.tirestinoQueueId]
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!tirestinoQueue) {
-    tirest.tirestinoQueueId = generateNewTirestinoQueue()
-    return lookupTirestinoQueue(tirest)
-  }
-
   return tirestinoQueue
 }

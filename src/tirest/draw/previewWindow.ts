@@ -1,11 +1,12 @@
-import type { Tirestino, Position } from '../types'
+import type { Tirest, Tirestino, Position } from '../types'
 
 import { fieldSize } from '../constants'
 import { drawBlock } from './block'
 
 export function drawPreviewWindow(
-  blockToDraw: Tirestino,
   ctx: CanvasRenderingContext2D,
+  tirest: Tirest,
+  blockToDraw: Tirestino,
 ): void {
   const previewWindowSize: number = ctx.canvas.width * 0.25
 
@@ -40,6 +41,7 @@ export function drawPreviewWindow(
 
     drawBlock(
       ctx,
+      tirest,
       blockToDraw.data[i],
       {
         x:

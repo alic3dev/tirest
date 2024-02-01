@@ -1,6 +1,7 @@
 import type { Tirest, MenuItem } from './types'
 
 import { generateNewTirest } from './tirest'
+import { settingsMenu } from './settingsMenu'
 
 export const pauseMenu: MenuItem[] = [
   {
@@ -10,30 +11,7 @@ export const pauseMenu: MenuItem[] = [
       tirest.gameState = 'Playing'
     },
   },
-  {
-    title: 'Key bindings',
-    type: 'Expandable',
-    items: [],
-  },
-  {
-    title: 'Input delay',
-    type: 'Numeric',
-    getMin() {
-      return 0
-    },
-    getMax() {
-      return null
-    },
-    getValue(tirest: Tirest): number {
-      return tirest.inputDelay
-    },
-    onIncrement(tirest: Tirest): void {
-      tirest.inputDelay++
-    },
-    onDecrement(tirest: Tirest): void {
-      tirest.inputDelay = Math.max(tirest.inputDelay - 1, 0)
-    },
-  },
+  ...settingsMenu,
   {
     title: 'Restart',
     type: 'Actionable',
