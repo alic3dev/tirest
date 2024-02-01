@@ -11,6 +11,9 @@ dependencies:
   '@vercel/analytics':
     specifier: ^1.1.2
     version: 1.1.2
+  zer0:
+    specifier: https://github.com/alic3dev/zer0
+    version: github.com/alic3dev/zer0/c8db241be6e8190a7394c77512a08b33dc7f3251
 
 devDependencies:
   '@auth/core':
@@ -8293,3 +8296,9 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
+
+  github.com/alic3dev/zer0/c8db241be6e8190a7394c77512a08b33dc7f3251:
+    resolution: {tarball: https://codeload.github.com/alic3dev/zer0/tar.gz/c8db241be6e8190a7394c77512a08b33dc7f3251}
+    name: zer0
+    version: 0.0.1
+    dev: false

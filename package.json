@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@qwik-ui/headless": "^0.2.2",
-    "@vercel/analytics": "^1.1.2"
+    "@vercel/analytics": "^1.1.2",
+    "zer0": "https://github.com/alic3dev/zer0"
   }
 }
