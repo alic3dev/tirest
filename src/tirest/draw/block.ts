@@ -7,8 +7,8 @@ export const drawBlock = (
   position: Position,
   blockSize: Size,
 ): void => {
-  const [fillColor, strokeColor]: [string, string] = selectedColorPalette
-    .blocks[data - 1] ?? ['#FFFFFF', '#999999']
+  const [fillColor, strokeColor]: [string, string] = tirest.settings
+    .selectedColorPalette.blocks[data - 1] ?? ['#FFFFFF', '#999999']
 
   ctx.fillStyle = fillColor
   ctx.strokeStyle = strokeColor

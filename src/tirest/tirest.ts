@@ -3,6 +3,7 @@ import type { Tirest } from './types'
 import { generateNewField } from './fields'
 import { generateNewTirestinoQueue } from './queues'
 import { fieldSize, INPUT_DELAY_MS } from './constants'
+import { standard } from './colorPalettes'
 
 export function generateNewTirest(): Tirest {
   return {
@@ -15,8 +16,6 @@ export function generateNewTirest(): Tirest {
     heldTirestinoId: null,
 
     droppingFrom: { x: Math.round(fieldSize.width / 2), y: 0 },
-
-    inputDelay: INPUT_DELAY_MS,
 
     prevTime: 0,
     prevInputTime: -INPUT_DELAY_MS,
@@ -31,5 +30,11 @@ export function generateNewTirest(): Tirest {
     gameState: 'Playing',
 
     selectedPauseMenuItem: null,
+
+    settings: {
+      inputDelay: INPUT_DELAY_MS,
+
+      selectedColorPalette: standard,
+    },
   }
 }
