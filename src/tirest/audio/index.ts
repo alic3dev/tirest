@@ -34,11 +34,23 @@ function getSynth(audioContext: AudioContext): Synth {
 
   const bpm: number = 3
 
-  _synth = new Synth(audioContext, undefined, channel.destination)
+  _synth = new Synth(
+    audioContext,
+    undefined,
+    channel.destination,
+    undefined,
+    false,
+  )
   _synth.setBPM(bpm)
   _synth.addOscillator('triangle', 0.25)
 
-  const synthTwo = new Synth(audioContext, undefined, channel.destination)
+  const synthTwo = new Synth(
+    audioContext,
+    undefined,
+    channel.destination,
+    undefined,
+    false,
+  )
   synthTwo.addOscillator('triangle', 0.25)
 
   const highNotes: string[] =
