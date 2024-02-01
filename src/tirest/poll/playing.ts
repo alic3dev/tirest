@@ -3,7 +3,7 @@ import type { Tirest, Tirestino, Position } from '../types'
 import { lookupTirestino } from '../tirestino'
 import { generateNewTirestinoQueue, lookupTirestinoQueue } from '../queues'
 import { lookupField } from '../fields'
-import { fieldSize, AUTO_FALL_MS, INPUT_DELAY_MS } from '../constants'
+import { fieldSize, AUTO_FALL_MS } from '../constants'
 
 function checkBounds(
   tirest: Tirest,
@@ -36,6 +36,16 @@ export function pollPlaying(
   tirest: Tirest,
   keysPressed: Record<string, boolean>,
 ): void {
+  if (keysPressed.Escape) {
+    if (!tirest.hasEscaped) {
+      tirest.gameState = 'Paused'
+      tirest.hasEscaped = true
+      return
+    }
+  } else {
+    tirest.hasEscaped = false
+  }
+
   if (tirest.currentTirestinoId === null) {
     const tirestinoQueue: Tirestino[] = lookupTirestinoQueue(tirest)
     tirest.currentTirestinoId = tirestinoQueue.pop()!.id
@@ -52,12 +62,15 @@ export function pollPlaying(
   let tirestino: Tirestino = lookupTirestino(tirest.currentTirestinoId)
 
   if (!keysPressed.ShiftLeft) tirest.hasHeld = false
-  if (!keysPressed.Space) tirest.hasManuallyDropped = false
+  if (!keysPressed.Space) {
+    tirest.hasManuallyDropped = false
+    tirest.hasSelected = false
+  }
   if (!keysPressed.ArrowUp && !keysPressed.KeyZ) tirest.hasRotated = false
 
   let hasDropped: boolean = false
 
-  if (keysPressed.Space && !tirest.hasManuallyDropped) {
+  if (keysPressed.Space && !tirest.hasManuallyDropped && !tirest.hasSelected) {
     tirest.hasManuallyDropped = true
     let dropToY: number = tirest.droppingFrom.y
 
@@ -138,7 +151,7 @@ export function pollPlaying(
 
     tirest.hasRotated = true
   } else if (
-    elapsedInputTime > INPUT_DELAY_MS &&
+    elapsedInputTime > tirest.inputDelay &&
     (keysPressed.ArrowLeft !== keysPressed.ArrowRight ||
       keysPressed.Space ||
       keysPressed.ShiftLeft)
@@ -203,6 +216,4 @@ export function pollPlaying(
       }
     }
   }
-
-  tirest.prevTime = time
 }
