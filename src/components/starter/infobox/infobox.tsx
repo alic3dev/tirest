@@ -1,7 +1,10 @@
-import { Slot, component$ } from '@builder.io/qwik'
-import styles from './infobox.module.css'
+import type { JSXOutput } from '@builder.io/qwik'
 
-export default component$(() => {
+import { Slot, component$ } from '@builder.io/qwik'
+
+import styles from './infobox.module.scss'
+
+export default component$((): JSXOutput => {
   return (
     <div class={styles.infobox}>
       <h3>
