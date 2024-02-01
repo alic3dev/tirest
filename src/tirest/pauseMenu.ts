@@ -41,6 +41,7 @@ export const pauseMenu: MenuItem[] = [
       const newTirest: Tirest = generateNewTirest()
 
       for (const key in newTirest) {
+        // @ts-ignore: Tirest destructuring into Tirest
         tirest[key] = newTirest[key]
       }
     },
