@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import styles from "./next-steps.module.css";
+import { component$ } from '@builder.io/qwik'
+import styles from './next-steps.module.css'
 
 export default component$(() => {
   return (
@@ -15,5 +15,5 @@ export default component$(() => {
         <button class="button-dark">:)</button>
       </div>
     </div>
-  );
-});
+  )
+})

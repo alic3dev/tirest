@@ -7,22 +7,31 @@ html {
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
-    "Helvetica Neue",
+    'Helvetica Neue',
     Arial,
-    "Noto Sans",
+    'Noto Sans',
     sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
 }
 
 body {
   background: var(--qwik-dark-background);
   color: var(--qwik-dark-text);
   overflow-x: hidden;
+
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 
 /* HEADINGS ------------------------------------- */
@@ -137,6 +146,11 @@ button.button-dark {
   background: var(--qwik-dirty-black);
 }
 
+a.button.button-danger,
+button.button-danger {
+  background: var(--danger-red);
+}
+
 a.button.button-small,
 button.button-small {
   padding: 15px 25px;
@@ -194,7 +208,7 @@ button.button-small {
 .icon:before {
   width: 18px;
   height: 18px;
-  content: "";
+  content: '';
   display: inline-block;
   margin-right: 20px;
   position: relative;

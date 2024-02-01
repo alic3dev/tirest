@@ -1,3 +1,5 @@
+import type { Tirest } from '~/tirest/types'
+
 import {
   $,
   component$,
@@ -6,7 +8,7 @@ import {
   useStore,
   useVisibleTask$,
 } from '@builder.io/qwik'
-import * as tirestUtils from '~/utils/tirest'
+import * as tirestUtils from '~/tirest'
 
 import styles from './game.module.scss'
 
@@ -21,7 +23,7 @@ const CANVAS_RESOLUTION: Size = {
 }
 
 export const Game = component$(() => {
-  const tirest = useSignal<tirestUtils.Tirest>(tirestUtils.getNew())
+  const tirest = useSignal<Tirest>(tirestUtils.getNew())
   const canvasRef = useSignal<HTMLCanvasElement>()
   const keysPressed = useStore<Record<string, boolean>>({})
 
