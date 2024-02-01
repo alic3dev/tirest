@@ -9,6 +9,8 @@ import { pauseMenu } from './pauseMenu'
 import _draw from './draw'
 import _poll from './poll'
 
+import * as audio from './audio'
+
 export function getNew(): Tirest {
   return generateNewTirest()
 }
@@ -19,6 +21,8 @@ export function poll(
   keysPressed: Record<string, boolean>,
 ): void {
   const currentGameState: GameState = tirest.gameState
+
+  audio.start()
 
   switch (currentGameState) {
     case 'Playing':
