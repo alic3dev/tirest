@@ -1,6 +1,4 @@
-export interface ColorPalette {
-  blocks: [string, string][]
-}
+import type { ColorPalette } from './types'
 
 export const standard: ColorPalette = {
   blocks: [
