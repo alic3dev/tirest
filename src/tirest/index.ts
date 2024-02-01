@@ -45,15 +45,16 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
   const tirestinoQueue: Tirestino[] = lookupTirestinoQueue(tirest)
 
   _draw.clear(ctx)
-  _draw.field(tirest, field, ctx)
-  _draw.previewWindow(tirestinoQueue[tirestinoQueue.length - 1], ctx)
+  _draw.field(ctx, tirest, field)
+  _draw.previewWindow(ctx, tirest, tirestinoQueue[tirestinoQueue.length - 1])
   _draw.holdingWindow(
+    ctx,
+    tirest,
     tirest.heldTirestinoId !== null
       ? lookupTirestino(tirest.heldTirestinoId)
       : null,
-    ctx,
   )
-  _draw.score(tirest.score, ctx)
+  _draw.score(ctx, tirest.score)
 
   if (tirest.gameState === 'Paused') {
     ctx.fillStyle = '#00000033'
@@ -112,32 +113,36 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
             menuItem.title,
           ).width
 
-          menuItem.getValue(tirest)
+          const menuItemValue: number | string = menuItem.getValue(tirest)
 
-          ctx.textAlign = 'left'
+          if (menuItemValue !== menuItem.getMin(tirest)) {
+            ctx.textAlign = 'left'
 
-          ctx.fillText(
-            '<',
-            menuItemPosition.x +
-              menuItemPositionOffset.x +
-              menuItemTitleWidth +
-              50,
-            menuItemPosition.y + menuItemPositionOffset.y,
-          )
+            ctx.fillText(
+              '<',
+              menuItemPosition.x +
+                menuItemPositionOffset.x +
+                menuItemTitleWidth +
+                50,
+              menuItemPosition.y + menuItemPositionOffset.y,
+            )
+          }
 
-          ctx.textAlign = 'right'
-          ctx.fillText(
-            '>',
-            menuItemPosition.x +
-              menuItemPositionOffset.x +
-              menuItemTitleWidth +
-              350,
-            menuItemPosition.y + menuItemPositionOffset.y,
-          )
+          if (menuItemValue !== menuItem.getMax(tirest)) {
+            ctx.textAlign = 'right'
+            ctx.fillText(
+              '>',
+              menuItemPosition.x +
+                menuItemPositionOffset.x +
+                menuItemTitleWidth +
+                350,
+              menuItemPosition.y + menuItemPositionOffset.y,
+            )
+          }
 
           ctx.textAlign = 'center'
           ctx.fillText(
-            `${menuItem.getValue(tirest)}`,
+            `${menuItemValue}`,
             menuItemPosition.x +
               menuItemPositionOffset.x +
               menuItemTitleWidth +

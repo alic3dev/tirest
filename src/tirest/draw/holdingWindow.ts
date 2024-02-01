@@ -1,11 +1,12 @@
-import type { Tirestino, Position, Size } from '../types'
+import type { Tirest, Tirestino, Position, Size } from '../types'
 
 import { fieldSize } from '../constants'
 import { drawBlock } from './block'
 
 export function drawHoldingWindow(
-  blockToDraw: Tirestino | null,
   ctx: CanvasRenderingContext2D,
+  tirest: Tirest,
+  blockToDraw: Tirestino | null,
 ): void {
   const holdingWindowSize: number = ctx.canvas.width * 0.25
   const textSize: number = 36
@@ -44,6 +45,7 @@ export function drawHoldingWindow(
 
       drawBlock(
         ctx,
+        tirest,
         blockToDraw.data[i],
         {
           x:

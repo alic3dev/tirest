@@ -2,7 +2,7 @@ import type { Position } from '../types'
 
 import { fieldSize } from '../constants'
 
-export function drawScore(score: number, ctx: CanvasRenderingContext2D): void {
+export function drawScore(ctx: CanvasRenderingContext2D, score: number): void {
   const holdingWindowSize: number = ctx.canvas.width * 0.25
   const textSize: number = 36
 

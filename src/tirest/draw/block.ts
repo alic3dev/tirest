@@ -1,9 +1,8 @@
-import type { Position, Size } from '../types'
-
-import { selectedColorPalette } from '../colorPalettes'
+import type { Position, Size, Tirest } from '../types'
 
 export const drawBlock = (
   ctx: CanvasRenderingContext2D,
+  tirest: Tirest,
   data: number,
   position: Position,
   blockSize: Size,

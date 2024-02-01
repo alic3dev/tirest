@@ -5,9 +5,9 @@ import { lookupTirestino } from '../tirestino'
 import { drawBlock } from './block'
 
 export function drawField(
+  ctx: CanvasRenderingContext2D,
   tirest: Tirest,
   field: Uint8Array,
-  ctx: CanvasRenderingContext2D,
 ): void {
   const fieldCanvasSize: Size = {
     width: ctx.canvas.width * 0.6,
@@ -47,6 +47,7 @@ export function drawField(
 
     drawBlock(
       ctx,
+      tirest,
       field[i],
       {
         x: fieldPosition.x + blockSize.width * (i % fieldSize.width),
@@ -63,6 +64,7 @@ export function drawField(
 
     drawBlock(
       ctx,
+      tirest,
       tirestino.data[i],
       {
         x:
