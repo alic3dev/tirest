@@ -18,6 +18,8 @@ export interface ColorPalette {
 }
 
 export interface Settings {
+  musicVolume: number
+
   inputDelay: number
 
   selectedColorPalette: ColorPalette

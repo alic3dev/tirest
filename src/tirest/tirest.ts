@@ -36,6 +36,8 @@ export function generateNewTirest(): Tirest {
     selectedPauseMenuItem: null,
 
     settings: {
+      musicVolume: 100,
+
       inputDelay: INPUT_DELAY_MS,
 
       selectedColorPalette: standard,

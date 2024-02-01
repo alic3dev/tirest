@@ -6,6 +6,32 @@ import * as settings from './settings'
 
 export const settingsMenu: MenuItem[] = [
   {
+    title: 'Music volume',
+    type: 'Numeric',
+    getMin() {
+      return 0
+    },
+    getMax() {
+      return 100
+    },
+    getValue(tirest: Tirest) {
+      return tirest.settings.musicVolume
+    },
+    onDecrement(tirest: Tirest) {
+      tirest.settings.musicVolume = Math.max(tirest.settings.musicVolume - 5, 0)
+
+      settings.save(tirest)
+    },
+    onIncrement(tirest: Tirest) {
+      tirest.settings.musicVolume = Math.min(
+        tirest.settings.musicVolume + 5,
+        100,
+      )
+
+      settings.save(tirest)
+    },
+  },
+  {
     title: 'Key bindings',
     type: 'Expandable',
     items: [],

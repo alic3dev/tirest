@@ -22,7 +22,7 @@ export function poll(
 ): void {
   const currentGameState: GameState = tirest.gameState
 
-  audio.start()
+  audio.start(tirest)
 
   switch (currentGameState) {
     case 'Playing':

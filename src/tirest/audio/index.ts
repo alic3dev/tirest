@@ -1,4 +1,5 @@
 import { Synth, Channel, utils } from 'zer0'
+import type { Tirest } from '../types'
 
 const noteTable = utils.createNoteTable(0, 6, utils.frequencyRoots.magic)
 
@@ -13,12 +14,13 @@ export function getAudioContext(): AudioContext {
 }
 
 let _mainChannel: Channel | null = null
+const FULL_GAIN_VALUE: number = 0.2
 
 function getMainChannel(audioContext: AudioContext): Channel {
   if (_mainChannel) return _mainChannel
 
   _mainChannel = new Channel(audioContext, audioContext.destination, false)
-  _mainChannel.gain.gain.value = 0.2
+  _mainChannel.gain.gain.value = FULL_GAIN_VALUE
 
   return _mainChannel
 }
@@ -30,11 +32,14 @@ function getSynth(audioContext: AudioContext): Synth {
 
   const channel: Channel = getMainChannel(audioContext)
 
-  const bpm: number = 60
+  const bpm: number = 3
 
   _synth = new Synth(audioContext, undefined, channel.destination)
   _synth.setBPM(bpm)
+  _synth.addOscillator('triangle', 0.25)
+
   const synthTwo = new Synth(audioContext, undefined, channel.destination)
+  synthTwo.addOscillator('triangle', 0.25)
 
   const highNotes: string[] =
     `E B C D C B A  A C E D C B  C D E C A A  D F A G F E  C E D C B  B C D E C A A  E B C D C B A  A C E D C B  C D E C A A  D F A G F E  C E D C B  B C D E C A A  E C D B C A G# B  E C D B C E A G#  E B C D C B A  A C E D C B  C D E C A A  D F A G F E  C E D C B  B C D E C A A  E B C D C B A  A C E D C B  C D E C A A  D F A G F E  C E D C B  B C D E C A A  E C D B C A G# B  E C D B C E A G#  E B C D C B A  A C E D C B  C D E C A A  D F A G F E  C E D C B  B C D E C A A `.split(
@@ -58,8 +63,8 @@ function getSynth(audioContext: AudioContext): Synth {
         // @ts-expect-error
         noteTable[
           highNotes[i] === 'A' || highNotes[i] === 'B' || highNotes[i] === 'G#'
-            ? 4
-            : 5
+            ? 3
+            : 4
         ][highNotes[i]],
         i,
       )
@@ -86,8 +91,20 @@ function getSynth(audioContext: AudioContext): Synth {
   return _synth
 }
 
-export function start(): void {
+export function start(tirest: Tirest): void {
   const audioContext: AudioContext = getAudioContext()
 
-  const synth: Synth = getSynth(audioContext)
+  const mainChannel: Channel = getMainChannel(audioContext)
+  const newGain: number = FULL_GAIN_VALUE * (tirest.settings.musicVolume / 100)
+
+  if (newGain <= 0) {
+    mainChannel.gain.gain.value = 0
+  } else {
+    mainChannel.gain.gain.exponentialRampToValueAtTime(
+      newGain,
+      audioContext.currentTime + 0.1,
+    )
+  }
+
+  getSynth(audioContext)
 }
