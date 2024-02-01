@@ -1,9 +1,11 @@
-import { component$ } from '@builder.io/qwik'
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
 import {
   QwikCityProvider,
   RouterOutlet,
   ServiceWorkerRegister,
 } from '@builder.io/qwik-city'
+import { inject } from '@vercel/analytics'
+
 import { RouterHead } from './components/router-head/router-head'
 
 import './global.css'
@@ -15,6 +17,19 @@ export default component$(() => {
    *
    * Don't remove the `<head>` and `<body>` elements.
    */
+
+  const hasInjected = useSignal<boolean>(false)
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(
+    (): void => {
+      if (!hasInjected.value) {
+        inject()
+        hasInjected.value = true
+      }
+    },
+    { strategy: 'document-ready' },
+  )
 
   return (
     <QwikCityProvider>
