@@ -1,11 +1,15 @@
-import type { Tirest } from './types'
+import type { Tirest, Settings } from './types'
 
 import { generateNewField } from './fields'
 import { generateNewTirestinoQueue } from './queues'
 import { fieldSize, INPUT_DELAY_MS } from './constants'
 import { standard } from './colorPalettes'
 
+import * as settings from './settings'
+
 export function generateNewTirest(): Tirest {
+  const savedSettings: Partial<Settings> = settings.load()
+
   return {
     score: 0,
 
@@ -35,6 +39,8 @@ export function generateNewTirest(): Tirest {
       inputDelay: INPUT_DELAY_MS,
 
       selectedColorPalette: standard,
+
+      ...savedSettings,
     },
   }
 }

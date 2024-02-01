@@ -2,6 +2,8 @@ import type { Tirest, MenuItem, ColorPalette } from './types'
 
 import { colorPalettes } from './colorPalettes'
 
+import * as settings from './settings'
+
 export const settingsMenu: MenuItem[] = [
   {
     title: 'Key bindings',
@@ -28,6 +30,8 @@ export const settingsMenu: MenuItem[] = [
 
       tirest.settings.selectedColorPalette =
         colorPalettes[Math.max(prevIndex - 1, 0)]
+
+      settings.save(tirest)
     },
     onIncrement(tirest: Tirest): void {
       const prevIndex: number = colorPalettes.findIndex(
@@ -37,6 +41,8 @@ export const settingsMenu: MenuItem[] = [
 
       tirest.settings.selectedColorPalette =
         colorPalettes[Math.min(prevIndex + 1, colorPalettes.length - 1)]
+
+      settings.save(tirest)
     },
   },
   {
@@ -53,9 +59,13 @@ export const settingsMenu: MenuItem[] = [
     },
     onDecrement(tirest: Tirest): void {
       tirest.settings.inputDelay = Math.max(tirest.settings.inputDelay - 1, 0)
+
+      settings.save(tirest)
     },
     onIncrement(tirest: Tirest): void {
       tirest.settings.inputDelay++
+
+      settings.save(tirest)
     },
   },
 ]
