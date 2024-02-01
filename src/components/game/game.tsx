@@ -23,7 +23,7 @@ const CANVAS_RESOLUTION: Size = {
 }
 
 export const Game = component$(() => {
-  const tirest = useSignal<Tirest>(tirestUtils.getNew())
+  const tirest = useSignal<Tirest>()
   const canvasRef = useSignal<HTMLCanvasElement>()
   const keysPressed = useStore<Record<string, boolean>>({})
 
@@ -44,7 +44,6 @@ export const Game = component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track, cleanup }) => {
     track(canvasRef)
-    track(tirest)
 
     if (!canvasRef.value) return
 
@@ -52,11 +51,13 @@ export const Game = component$(() => {
       canvasRef.value.getContext('2d')
     if (!ctx) return
 
+    if (!tirest.value) tirest.value = tirestUtils.getNew()
+
     let animationFrameHandle: number
 
     const animationFrame = (time: DOMHighResTimeStamp): void => {
-      tirestUtils.poll(time, tirest.value, keysPressed)
-      tirestUtils.draw(tirest.value, ctx)
+      tirestUtils.poll(time, tirest.value!, keysPressed)
+      tirestUtils.draw(tirest.value!, ctx)
 
       animationFrameHandle = window.requestAnimationFrame(animationFrame)
     }
