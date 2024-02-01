@@ -6,7 +6,7 @@ import { Link } from '@builder.io/qwik-city'
 import { LoginModal } from '~/components/modals/loginModal'
 import { useAuthSession, useAuthSignout } from '~/routes/plugin@auth'
 
-import styles from './header.module.css'
+import styles from './header.module.scss'
 
 export default component$((): JSXOutput => {
   const showLoginModal = useSignal<boolean>(false)

@@ -1,3 +1,5 @@
+import type { JSXOutput } from '@builder.io/qwik'
+
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
 import {
   QwikCityProvider,
@@ -8,9 +10,9 @@ import { inject } from '@vercel/analytics'
 
 import { RouterHead } from './components/router-head/router-head'
 
-import './global.css'
+import './global.scss'
 
-export default component$(() => {
+export default component$((): JSXOutput => {
   /**
    * The root of a QwikCity site always start with the <QwikCityProvider> component,
    * immediately followed by the document's <head> and <body>.

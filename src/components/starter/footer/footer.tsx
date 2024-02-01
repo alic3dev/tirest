@@ -1,7 +1,10 @@
-import { component$ } from '@builder.io/qwik'
-import styles from './footer.module.css'
+import type { JSXOutput } from '@builder.io/qwik'
 
-export default component$(() => {
+import { component$ } from '@builder.io/qwik'
+
+import styles from './footer.module.scss'
+
+export default component$((): JSXOutput => {
   return (
     <footer>
       <div class="container">
