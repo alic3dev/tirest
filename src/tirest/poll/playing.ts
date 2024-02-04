@@ -1,9 +1,9 @@
-import type { Tirest, Tirestino, Position } from '../types'
+import type { Tirest, Tirestino, Position, ProgressInfo } from 'tirest/types'
 
-import { lookupTirestino } from '../tirestino'
-import { generateNewTirestinoQueue, lookupTirestinoQueue } from '../queues'
-import { lookupField } from '../fields'
-import { fieldSize, AUTO_FALL_MS } from '../constants'
+import { lookupTirestino } from 'tirest/tirestino'
+import { generateNewTirestinoQueue, lookupTirestinoQueue } from 'tirest/queues'
+import { lookupField } from 'tirest/fields'
+import { fieldSize, AUTO_FALL_MS } from 'tirest/constants'
 
 function checkBounds(
   tirest: Tirest,
@@ -69,6 +69,7 @@ export function pollPlaying(
   if (!keysPressed.ArrowUp && !keysPressed.KeyZ) tirest.hasRotated = false
 
   let hasDropped: boolean = false
+  let hasHeld: boolean = false
 
   if (keysPressed.Space && !tirest.hasManuallyDropped && !tirest.hasSelected) {
     tirest.hasManuallyDropped = true
@@ -108,6 +109,8 @@ export function pollPlaying(
       y: 0,
     }
 
+    tirestino = lookupTirestino(tirest.currentTirestinoId)
+
     hasDropped = true
   } else if (keysPressed.ShiftLeft && !tirest.hasHeld) {
     tirest.prevAutoFallTime = time
@@ -134,6 +137,10 @@ export function pollPlaying(
       x: Math.floor(fieldSize.width / 2),
       y: 0,
     }
+
+    tirestino = lookupTirestino(tirest.currentTirestinoId)
+
+    hasHeld = true
   } else if (
     (keysPressed.ArrowUp || keysPressed.KeyZ) &&
     !tirest.hasRotated &&
@@ -194,6 +201,8 @@ export function pollPlaying(
   }
 
   if (hasDropped) {
+    let clearedLinesThisDrop: number = 0
+
     for (let y: number = fieldSize.height - 1; y >= 0; y--) {
       let shouldClear: boolean = true
 
@@ -205,6 +214,31 @@ export function pollPlaying(
       }
 
       if (shouldClear) {
+        clearedLinesThisDrop++
+
+        const currentLevelProgress: ProgressInfo =
+          tirest.progress.byLevel[tirest.progress.byLevel.length - 1]
+        currentLevelProgress.clearedLines++
+        tirest.progress.totals.clearedLines++
+
+        const earnedScore: number =
+          clearedLinesThisDrop * tirest.combo * tirest.level.number * 100
+
+        currentLevelProgress.score += earnedScore
+        tirest.progress.totals.score += earnedScore
+
+        if (currentLevelProgress.clearedLines >= tirest.level.linesToClear) {
+          tirest.level = {
+            number: tirest.level.number + 1,
+            linesToClear: Math.floor(tirest.level.linesToClear * 1.15),
+          }
+
+          tirest.progress.byLevel.push({
+            clearedLines: 0,
+            score: 0,
+          })
+        }
+
         for (let yy: number = y; yy >= 0; yy--) {
           for (let x: number = 0; x < fieldSize.width; x++) {
             field[fieldSize.width * yy + x] =
@@ -214,6 +248,18 @@ export function pollPlaying(
 
         y++
       }
+    }
+
+    if (clearedLinesThisDrop) {
+      tirest.combo++
+    } else {
+      tirest.combo = 1
+    }
+  }
+
+  if (hasHeld || hasDropped) {
+    if (checkBounds(tirest, tirestino, field)) {
+      tirest.gameState = 'GameOver'
     }
   }
 }

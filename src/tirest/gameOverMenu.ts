@@ -1,17 +1,16 @@
 import type { Tirest, MenuItem } from 'tirest/types'
 
 import { generateNewTirest } from 'tirest/tirest'
-import { settingsMenu } from 'tirest/settingsMenu'
 
-export const pauseMenu: MenuItem[] = [
-  {
-    title: 'Resume (ESC)',
-    type: 'Actionable',
-    onClick: (tirest: Tirest): void => {
-      tirest.gameState = 'Playing'
-    },
-  },
-  ...settingsMenu,
+export const gameOverMenu: MenuItem[] = [
+  // {
+  //   title: 'Resume (ESC)',
+  //   type: 'Actionable',
+  //   onClick: (tirest: Tirest): void => {
+  //     tirest.gameState = 'Playing'
+  //   },
+  // },
+  // ...settingsMenu,
   {
     title: 'Restart',
     type: 'Actionable',

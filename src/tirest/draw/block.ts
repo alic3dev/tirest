@@ -1,4 +1,4 @@
-import type { Position, Size, Tirest } from '../types'
+import type { Position, Size, Tirest } from 'tirest/types'
 
 export const drawBlock = (
   ctx: CanvasRenderingContext2D,

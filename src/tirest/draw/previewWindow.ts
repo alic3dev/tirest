@@ -1,7 +1,7 @@
-import type { Tirest, Tirestino, Position } from '../types'
+import type { Tirest, Tirestino, Position } from 'tirest/types'
 
-import { fieldSize } from '../constants'
-import { drawBlock } from './block'
+import { fieldSize } from 'tirest/constants'
+import { drawBlock } from 'tirest/draw/block'
 
 export function drawPreviewWindow(
   ctx: CanvasRenderingContext2D,

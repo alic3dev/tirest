@@ -1,9 +1,9 @@
-import { drawBlock } from './block'
-import { drawClear } from './clear'
-import { drawField } from './field'
-import { drawHoldingWindow } from './holdingWindow'
-import { drawPreviewWindow } from './previewWindow'
-import { drawScore } from './score'
+import { drawBlock } from 'tirest/draw/block'
+import { drawClear } from 'tirest/draw/clear'
+import { drawField } from 'tirest/draw/field'
+import { drawHoldingWindow } from 'tirest/draw/holdingWindow'
+import { drawPreviewWindow } from 'tirest/draw/previewWindow'
+import { drawInfo } from 'tirest/draw/info'
 
 export {
   drawBlock,
@@ -11,7 +11,7 @@ export {
   drawField,
   drawHoldingWindow,
   drawPreviewWindow,
-  drawScore,
+  drawInfo,
 }
 
 export default {
@@ -20,5 +20,5 @@ export default {
   field: drawField,
   holdingWindow: drawHoldingWindow,
   previewWindow: drawPreviewWindow,
-  score: drawScore,
+  info: drawInfo,
 }

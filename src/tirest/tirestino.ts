@@ -1,4 +1,4 @@
-import type { Tirestino } from './types'
+import type { Tirestino } from 'tirest/types'
 
 // .
 // .

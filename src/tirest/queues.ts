@@ -1,8 +1,8 @@
 import type { UUID } from 'crypto'
 
-import type { Tirest, Tirestino } from './types'
+import type { Tirest, Tirestino } from 'tirest/types'
 
-import { defaultTirestinos } from './tirestino'
+import { defaultTirestinos } from 'tirest/tirestino'
 
 export const tirestinoQueues: Record<UUID, Tirestino[]> = {}
 

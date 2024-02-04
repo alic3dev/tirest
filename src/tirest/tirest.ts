@@ -1,11 +1,11 @@
-import type { Tirest, Settings } from './types'
+import type { Tirest, Settings } from 'tirest/types'
 
-import { generateNewField } from './fields'
-import { generateNewTirestinoQueue } from './queues'
-import { fieldSize, INPUT_DELAY_MS } from './constants'
-import { standard } from './colorPalettes'
+import { generateNewField } from 'tirest/fields'
+import { generateNewTirestinoQueue } from 'tirest/queues'
+import { fieldSize, INPUT_DELAY_MS } from 'tirest/constants'
+import { standard } from 'tirest/colorPalettes'
 
-import * as settings from './settings'
+import * as settings from 'tirest/settings'
 
 export function generateNewTirest(): Tirest {
   const savedSettings: Partial<Settings> = settings.load()
@@ -33,10 +33,31 @@ export function generateNewTirest(): Tirest {
 
     gameState: 'Playing',
 
-    selectedPauseMenuItem: null,
+    selectedMenuItem: null,
+
+    combo: 1,
+
+    level: {
+      number: 1,
+      linesToClear: 10,
+    },
+
+    progress: {
+      totals: {
+        clearedLines: 0,
+        score: 0,
+      },
+
+      byLevel: [
+        {
+          clearedLines: 0,
+          score: 0,
+        },
+      ],
+    },
 
     settings: {
-      musicVolume: 100,
+      musicVolume: 0,
 
       inputDelay: INPUT_DELAY_MS,
 

@@ -1,4 +1,4 @@
-import type { Settings, Tirest } from './types'
+import type { Settings, Tirest } from 'tirest/types'
 
 const LOCAL_STORAGE_SETTINGS_KEY: string = 'tirest:settings'
 

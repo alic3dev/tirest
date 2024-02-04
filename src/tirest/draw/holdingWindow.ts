@@ -1,7 +1,7 @@
-import type { Tirest, Tirestino, Position, Size } from '../types'
+import type { Tirest, Tirestino, Position, Size } from 'tirest/types'
 
-import { fieldSize } from '../constants'
-import { drawBlock } from './block'
+import { fieldSize } from 'tirest/constants'
+import { drawBlock } from 'tirest/draw/block'
 
 export function drawHoldingWindow(
   ctx: CanvasRenderingContext2D,
