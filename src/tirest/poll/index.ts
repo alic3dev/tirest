@@ -1,6 +1,6 @@
-import { pollPaused } from './paused'
-import { pollPlaying } from './playing'
-import { pollGameOver } from './gameOver'
+import { pollPaused } from 'tirest/poll/paused'
+import { pollPlaying } from 'tirest/poll/playing'
+import { pollGameOver } from 'tirest/poll/gameOver'
 
 export { pollPaused, pollPlaying, pollGameOver }
 

@@ -1,8 +1,8 @@
-import type { Tirest, MenuItem, ColorPalette } from './types'
+import type { Tirest, MenuItem, ColorPalette } from 'tirest/types'
 
-import { colorPalettes } from './colorPalettes'
+import { colorPalettes } from 'tirest/colorPalettes'
 
-import * as settings from './settings'
+import * as settings from 'tirest/settings'
 
 export const settingsMenu: MenuItem[] = [
   {

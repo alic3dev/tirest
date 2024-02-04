@@ -1,7 +1,7 @@
-import type { Tirest, MenuItem } from './types'
+import type { Tirest, MenuItem } from 'tirest/types'
 
-import { generateNewTirest } from './tirest'
-import { settingsMenu } from './settingsMenu'
+import { generateNewTirest } from 'tirest/tirest'
+import { settingsMenu } from 'tirest/settingsMenu'
 
 export const pauseMenu: MenuItem[] = [
   {

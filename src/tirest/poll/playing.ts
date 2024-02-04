@@ -1,9 +1,9 @@
-import type { Tirest, Tirestino, Position, ProgressInfo } from '../types'
+import type { Tirest, Tirestino, Position, ProgressInfo } from 'tirest/types'
 
-import { lookupTirestino } from '../tirestino'
-import { generateNewTirestinoQueue, lookupTirestinoQueue } from '../queues'
-import { lookupField } from '../fields'
-import { fieldSize, AUTO_FALL_MS } from '../constants'
+import { lookupTirestino } from 'tirest/tirestino'
+import { generateNewTirestinoQueue, lookupTirestinoQueue } from 'tirest/queues'
+import { lookupField } from 'tirest/fields'
+import { fieldSize, AUTO_FALL_MS } from 'tirest/constants'
 
 function checkBounds(
   tirest: Tirest,

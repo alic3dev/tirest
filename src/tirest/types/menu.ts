@@ -1,4 +1,4 @@
-import type { Tirest } from './tirest'
+import type { Tirest } from 'tirest/types/tirest'
 
 type MenuItemType = 'Actionable' | 'Expandable' | 'Numeric' | 'List' | 'String'
 

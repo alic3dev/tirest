@@ -1,9 +1,9 @@
-import { drawBlock } from './block'
-import { drawClear } from './clear'
-import { drawField } from './field'
-import { drawHoldingWindow } from './holdingWindow'
-import { drawPreviewWindow } from './previewWindow'
-import { drawInfo } from './info'
+import { drawBlock } from 'tirest/draw/block'
+import { drawClear } from 'tirest/draw/clear'
+import { drawField } from 'tirest/draw/field'
+import { drawHoldingWindow } from 'tirest/draw/holdingWindow'
+import { drawPreviewWindow } from 'tirest/draw/previewWindow'
+import { drawInfo } from 'tirest/draw/info'
 
 export {
   drawBlock,

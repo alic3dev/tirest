@@ -1,4 +1,4 @@
-import type { Size } from './utils'
+import type { Size } from 'tirest/types/utils'
 
 export interface Tirestino {
   readonly id: number

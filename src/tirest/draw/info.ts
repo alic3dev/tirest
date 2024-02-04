@@ -1,6 +1,6 @@
-import type { Position, Tirest } from '../types'
+import type { Position, Tirest } from 'tirest/types'
 
-import { fieldSize } from '../constants'
+import { fieldSize } from 'tirest/constants'
 
 export function drawInfo(ctx: CanvasRenderingContext2D, tirest: Tirest): void {
   const holdingWindowSize: number = ctx.canvas.width * 0.25

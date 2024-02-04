@@ -1,7 +1,7 @@
-import type { Tirest, MenuItem } from '../types'
+import type { Tirest, MenuItem } from 'tirest/types'
 
-import { gameOverMenu } from '../gameOverMenu'
-import { PAUSE_MENU_INPUT_DELAY_MS } from '../constants'
+import { gameOverMenu } from 'tirest/gameOverMenu'
+import { PAUSE_MENU_INPUT_DELAY_MS } from 'tirest/constants'
 
 export function pollGameOver(
   time: DOMHighResTimeStamp,

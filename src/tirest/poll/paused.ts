@@ -1,7 +1,7 @@
-import type { Tirest, MenuItem } from '../types'
+import type { Tirest, MenuItem } from 'tirest/types'
 
-import { pauseMenu } from '../pauseMenu'
-import { PAUSE_MENU_INPUT_DELAY_MS } from '../constants'
+import { pauseMenu } from 'tirest/pauseMenu'
+import { PAUSE_MENU_INPUT_DELAY_MS } from 'tirest/constants'
 
 export function pollPaused(
   time: DOMHighResTimeStamp,

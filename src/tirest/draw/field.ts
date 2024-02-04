@@ -1,8 +1,8 @@
-import type { Size, Tirest, Tirestino } from '../types'
+import type { Size, Tirest, Tirestino } from 'tirest/types'
 
-import { fieldSize } from '../constants'
-import { lookupTirestino } from '../tirestino'
-import { drawBlock } from './block'
+import { fieldSize } from 'tirest/constants'
+import { lookupTirestino } from 'tirest/tirestino'
+import { drawBlock } from 'tirest/draw/block'
 
 export function drawField(
   ctx: CanvasRenderingContext2D,

@@ -1,5 +1,6 @@
+import type { Tirest } from 'tirest/types'
+
 import { Synth, Channel, utils } from 'zer0'
-import type { Tirest } from '../types'
 
 const noteTable = utils.createNoteTable(0, 6, utils.frequencyRoots.magic)
 

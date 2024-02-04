@@ -1,4 +1,4 @@
-import type { Size } from './types'
+import type { Size } from 'tirest/types'
 
 export const PAUSE_MENU_INPUT_DELAY_MS: number = 100
 export const INPUT_DELAY_MS: number = 45

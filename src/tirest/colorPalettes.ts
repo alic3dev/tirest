@@ -1,4 +1,4 @@
-import type { ColorPalette } from './types'
+import type { ColorPalette } from 'tirest/types'
 
 export const standard: ColorPalette = {
   name: 'Marsh',

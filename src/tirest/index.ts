@@ -1,21 +1,27 @@
-import type { GameState, MenuItem, Position, Tirest, Tirestino } from './types'
+import type {
+  GameState,
+  MenuItem,
+  Position,
+  Tirest,
+  Tirestino,
+} from 'tirest/types'
 
-import { generateNewTirest } from './tirest'
-import { lookupTirestino } from './tirestino'
-import { lookupTirestinoQueue } from './queues'
-import { lookupField } from './fields'
-import { pauseMenu } from './pauseMenu'
-import { gameOverMenu } from './gameOverMenu'
+import { generateNewTirest } from 'tirest/tirest'
+import { lookupTirestino } from 'tirest/tirestino'
+import { lookupTirestinoQueue } from 'tirest/queues'
+import { lookupField } from 'tirest/fields'
+import { pauseMenu } from 'tirest/pauseMenu'
+import { gameOverMenu } from 'tirest/gameOverMenu'
 
 const menuLookup: Partial<Record<GameState, MenuItem[]>> = {
   Paused: pauseMenu,
   GameOver: gameOverMenu,
 }
 
-import _draw from './draw'
-import _poll from './poll'
+import _draw from 'tirest/draw'
+import _poll from 'tirest/poll'
 
-import * as audio from './audio'
+import * as audio from 'tirest/audio'
 
 export function getNew(): Tirest {
   return generateNewTirest()

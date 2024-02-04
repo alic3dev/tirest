@@ -1,8 +1,8 @@
 import type { UUID } from 'crypto'
 
-import type { Size, Tirest } from './types'
+import type { Size, Tirest } from 'tirest/types'
 
-import { fieldSize as _fieldSize } from './constants'
+import { fieldSize as _fieldSize } from 'tirest/constants'
 
 export const fieldLookup: Record<UUID, Uint8Array> = {}
 
