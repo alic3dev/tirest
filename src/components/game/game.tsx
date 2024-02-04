@@ -1,4 +1,4 @@
-import type { Tirest } from '~/tirest/types'
+import type { Tirest, Size } from '~/tirest/types'
 
 import {
   $,
@@ -11,11 +11,6 @@ import {
 import * as tirestUtils from '~/tirest'
 
 import styles from './game.module.scss'
-
-interface Size {
-  width: number
-  height: number
-}
 
 const CANVAS_RESOLUTION: Size = {
   width: 1440,
