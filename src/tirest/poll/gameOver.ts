@@ -12,17 +12,6 @@ export function pollGameOver(
     tirest.selectedMenuItem = 0
   }
 
-  if (keysPressed.Escape) {
-    if (!tirest.hasEscaped) {
-      tirest.selectedMenuItem = null
-      tirest.gameState = 'Playing'
-      tirest.hasEscaped = true
-      return
-    }
-  } else {
-    tirest.hasEscaped = false
-  }
-
   const elapsedInputTime: number = time - tirest.prevInputTime
 
   if (!keysPressed.Enter && !keysPressed.Space) {
