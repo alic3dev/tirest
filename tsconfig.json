@@ -19,6 +19,7 @@
     "types": ["node", "vite/client"],
     "paths": {
       "~/*": ["./src/*"],
+      "tirest": ["./src/tirest"],
       "tirest/*": ["./src/tirest/*"],
     },
   },
