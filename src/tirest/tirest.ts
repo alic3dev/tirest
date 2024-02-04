@@ -33,6 +33,7 @@ export function generateNewTirest(): Tirest {
 
     gameState: 'Playing',
 
+    selectedMenuItem: null,
 
     combo: 1,
 

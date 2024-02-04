@@ -5,6 +5,12 @@ import { lookupTirestino } from './tirestino'
 import { lookupTirestinoQueue } from './queues'
 import { lookupField } from './fields'
 import { pauseMenu } from './pauseMenu'
+import { gameOverMenu } from './gameOverMenu'
+
+const menuLookup: Partial<Record<GameState, MenuItem[]>> = {
+  Paused: pauseMenu,
+  GameOver: gameOverMenu,
+}
 
 import _draw from './draw'
 import _poll from './poll'
@@ -32,6 +38,7 @@ export function poll(
       _poll.paused(time, tirest, keysPressed)
       break
     case 'GameOver':
+      _poll.gameOver(time, tirest, keysPressed)
       break
     default:
       throw new Error(`Unknown game state: ${currentGameState}`)
@@ -60,7 +67,9 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
   )
   _draw.info(ctx, tirest)
 
-  if (tirest.gameState === 'Paused') {
+  if (tirest.gameState === 'Paused' || tirest.gameState === 'GameOver') {
+    const currentMenu: MenuItem[] = menuLookup[tirest.gameState]!
+
     ctx.fillStyle = '#00000033'
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
@@ -84,7 +93,7 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
       y: pausedPosition.y + titleTextSize * 2 + textSize,
     }
 
-    for (let i = 0; i < pauseMenu.length; i++) {
+    for (let i = 0; i < currentMenu.length; i++) {
       ctx.font = `bold ${textSize}px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont`
 
       const menuItemPositionOffset: Position = {
@@ -94,7 +103,7 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
 
       ctx.fillStyle = '#FFFFFF'
 
-      if (tirest.selectedPauseMenuItem === i) {
+      if (tirest.selectedMenuItem === i) {
         ctx.textAlign = 'right'
 
         const arrowWidth: number = ctx.measureText('->').width
@@ -108,7 +117,7 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = '#FFFFFF66'
       }
 
-      const menuItem: MenuItem = pauseMenu[i]
+      const menuItem: MenuItem = currentMenu[i]
 
       switch (menuItem.type) {
         case 'List':
@@ -170,5 +179,7 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
         menuItemPosition.y + menuItemPositionOffset.y,
       )
     }
+  } else {
+    tirest.selectedMenuItem = null
   }
 }
