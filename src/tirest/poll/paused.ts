@@ -40,7 +40,7 @@ export function pollPaused(
     (!!keysPressed.ArrowUp !== !!keysPressed.ArrowDown) !==
       (!!keysPressed.ArrowLeft !== !!keysPressed.ArrowRight)
   ) {
-    if (keysPressed.ArrowUp !== keysPressed.ArrowDown) {
+    if (!!keysPressed.ArrowUp !== !!keysPressed.ArrowDown) {
       tirest.selectedPauseMenuItem = Math.max(
         Math.min(
           tirest.selectedPauseMenuItem +
@@ -49,10 +49,10 @@ export function pollPaused(
         ),
         0,
       )
-    } else if (keysPressed.ArrowLeft && !keysPressed.ArrowRight) {
+    } else if (!!keysPressed.ArrowLeft && !keysPressed.ArrowRight) {
       if (menuItem.type === 'Numeric' || menuItem.type === 'List')
         menuItem.onDecrement(tirest)
-    } else if (!keysPressed.ArrowLeft && keysPressed.ArrowRight) {
+    } else if (!keysPressed.ArrowLeft && !!keysPressed.ArrowRight) {
       if (menuItem.type === 'Numeric' || menuItem.type === 'List')
         menuItem.onIncrement(tirest)
     }
