@@ -1,4 +1,6 @@
 .hero {
+  position: relative;
+
   display: flex;
   vertical-align: middle;
   flex-direction: column;
@@ -7,16 +9,6 @@
   height: 450px;
   justify-content: center;
   gap: 40px;
-}
-
-.hero-image {
-  width: 100%;
-  position: absolute;
-  height: auto;
-  object-fit: cover;
-  z-index: -1;
-  opacity: 0.2;
-  pointer-events: none;
 }
 
 .hero p {
@@ -29,6 +21,19 @@
   display: flex;
   flex-direction: row;
   gap: 24px;
+}
+
+.canvas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100%;
+
+  z-index: -1;
+
+  pointer-events: none;
 }
 
 @media screen and (min-width: 768px) {

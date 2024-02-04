@@ -1,12 +1,12 @@
 import type { UUID } from 'crypto'
 
-import type { Tirest } from './types'
+import type { Size, Tirest } from './types'
 
-import { fieldSize } from './constants'
+import { fieldSize as _fieldSize } from './constants'
 
 export const fieldLookup: Record<UUID, Uint8Array> = {}
 
-export function generateNewField(): UUID {
+export function generateNewField(fieldSize: Size = _fieldSize): UUID {
   const fieldId: UUID = crypto.randomUUID()
   fieldLookup[fieldId] = new Uint8Array(fieldSize.width * fieldSize.height)
 
