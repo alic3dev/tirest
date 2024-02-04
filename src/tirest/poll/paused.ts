@@ -37,8 +37,8 @@ export function pollPaused(
     tirest.hasSelected = true
   } else if (
     elapsedInputTime > PAUSE_MENU_INPUT_DELAY_MS &&
-    (keysPressed.ArrowUp !== keysPressed.ArrowDown) !==
-      (keysPressed.ArrowLeft !== keysPressed.ArrowRight)
+    (!!keysPressed.ArrowUp !== !!keysPressed.ArrowDown) !==
+      (!!keysPressed.ArrowLeft !== !!keysPressed.ArrowRight)
   ) {
     if (keysPressed.ArrowUp !== keysPressed.ArrowDown) {
       tirest.selectedPauseMenuItem = Math.max(
