@@ -84,7 +84,11 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
     }
 
     ctx.fillStyle = '#FFFFFFFF'
-    ctx.fillText(`PAUSED`, pausedPosition.x, pausedPosition.y)
+    ctx.fillText(
+      tirest.gameState.toUpperCase(),
+      pausedPosition.x,
+      pausedPosition.y,
+    )
 
     const textSize: number = 48
 
