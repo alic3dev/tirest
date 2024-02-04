@@ -17,6 +17,22 @@ export interface ColorPalette {
   blocks: [string, string][]
 }
 
+export interface Level {
+  number: number
+
+  linesToClear: number
+}
+
+export interface ProgressInfo {
+  clearedLines: number
+  score: number
+}
+
+export interface Progress {
+  totals: ProgressInfo
+  byLevel: ProgressInfo[]
+}
+
 export interface Settings {
   musicVolume: number
 
@@ -48,7 +64,13 @@ export interface Tirest {
 
   gameState: GameState
 
-  selectedPauseMenuItem: number | null
+  selectedMenuItem: number | null
+
+  combo: number
+
+  level: Level
+
+  progress: Progress
 
   settings: Settings
 }

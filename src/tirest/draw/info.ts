@@ -1,8 +1,8 @@
-import type { Position } from '../types'
+import type { Position, Tirest } from '../types'
 
 import { fieldSize } from '../constants'
 
-export function drawScore(ctx: CanvasRenderingContext2D, score: number): void {
+export function drawInfo(ctx: CanvasRenderingContext2D, tirest: Tirest): void {
   const holdingWindowSize: number = ctx.canvas.width * 0.25
   const textSize: number = 36
 
@@ -28,8 +28,32 @@ export function drawScore(ctx: CanvasRenderingContext2D, score: number): void {
   )
 
   ctx.fillText(
-    `${score}`,
+    `${tirest.progress.totals.score}`,
     holdingWindowPosition.x + holdingWindowSize / 2,
     holdingWindowPosition.y + holdingWindowSize + textSize * 10,
+  )
+
+  ctx.fillText(
+    `Level`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize * 14,
+  )
+
+  ctx.fillText(
+    `${tirest.level.number}`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize * 16,
+  )
+
+  ctx.fillText(
+    `Lines to clear`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize * 20,
+  )
+
+  ctx.fillText(
+    `${tirest.level.linesToClear - tirest.progress.byLevel[tirest.progress.byLevel.length - 1].clearedLines}`,
+    holdingWindowPosition.x + holdingWindowSize / 2,
+    holdingWindowPosition.y + holdingWindowSize + textSize * 22,
   )
 }

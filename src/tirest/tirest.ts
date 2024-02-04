@@ -33,7 +33,27 @@ export function generateNewTirest(): Tirest {
 
     gameState: 'Playing',
 
-    selectedPauseMenuItem: null,
+
+    combo: 1,
+
+    level: {
+      number: 1,
+      linesToClear: 10,
+    },
+
+    progress: {
+      totals: {
+        clearedLines: 0,
+        score: 0,
+      },
+
+      byLevel: [
+        {
+          clearedLines: 0,
+          score: 0,
+        },
+      ],
+    },
 
     settings: {
       musicVolume: 0,

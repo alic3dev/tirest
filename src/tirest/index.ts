@@ -58,7 +58,7 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
       ? lookupTirestino(tirest.heldTirestinoId)
       : null,
   )
-  _draw.score(ctx, tirest.score)
+  _draw.info(ctx, tirest)
 
   if (tirest.gameState === 'Paused') {
     ctx.fillStyle = '#00000033'

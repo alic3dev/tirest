@@ -3,7 +3,7 @@ import { drawClear } from './clear'
 import { drawField } from './field'
 import { drawHoldingWindow } from './holdingWindow'
 import { drawPreviewWindow } from './previewWindow'
-import { drawScore } from './score'
+import { drawInfo } from './info'
 
 export {
   drawBlock,
@@ -11,7 +11,7 @@ export {
   drawField,
   drawHoldingWindow,
   drawPreviewWindow,
-  drawScore,
+  drawInfo,
 }
 
 export default {
@@ -20,5 +20,5 @@ export default {
   field: drawField,
   holdingWindow: drawHoldingWindow,
   previewWindow: drawPreviewWindow,
-  score: drawScore,
+  info: drawInfo,
 }
