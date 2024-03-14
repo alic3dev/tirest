@@ -8,7 +8,7 @@ import type { Settings } from 'tirest/types/settings'
 export type GameState = 'Playing' | 'Paused' | 'GameOver'
 
 export interface Tirest {
-  score: number
+  id: UUID
 
   fieldId: UUID
   tirestinoQueueId: UUID

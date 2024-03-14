@@ -3,11 +3,7 @@ import type { DocumentHead } from '@builder.io/qwik-city'
 import { Game } from '~/components/game/game'
 
 export default component$(() => {
-  return (
-    <>
-      <Game />
-    </>
-  )
+  return <Game />
 })
 
 export const head: DocumentHead = {
