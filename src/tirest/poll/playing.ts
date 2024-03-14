@@ -4,6 +4,7 @@ import { lookupTirestino } from 'tirest/tirestino'
 import { generateNewTirestinoQueue, lookupTirestinoQueue } from 'tirest/queues'
 import { lookupField } from 'tirest/fields'
 import { fieldSize, AUTO_FALL_MS } from 'tirest/constants'
+import { triggerEvent } from '../events'
 
 function checkBounds(
   tirest: Tirest,
@@ -260,6 +261,7 @@ export function pollPlaying(
   if (hasHeld || hasDropped) {
     if (checkBounds(tirest, tirestino, field)) {
       tirest.gameState = 'GameOver'
+      triggerEvent(tirest, 'GAME_OVER')
     }
   }
 }

@@ -15,7 +15,7 @@ export const gameOverMenu: MenuItem[] = [
     title: 'Restart',
     type: 'Actionable',
     onClick: (tirest: Tirest): void => {
-      const newTirest: Tirest = generateNewTirest()
+      const newTirest: Tirest = generateNewTirest(tirest)
 
       for (const key in newTirest) {
         // @ts-ignore: Tirest destructuring into Tirest

@@ -1,13 +1,13 @@
 import type { UUID } from 'crypto'
 import type { JSXOutput } from '@builder.io/qwik'
-import type { Tirest, Size } from '~/tirest/types'
+import type { Tirest, Size } from 'tirest/types'
 
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 
-import { drawBlock } from '~/tirest/draw'
-import { colorPalettes } from '~/tirest/colorPalettes'
-import { generateNewField, lookupField } from '~/tirest/fields'
+import { drawBlock } from 'tirest/draw'
+import { colorPalettes } from 'tirest/colorPalettes'
+import { generateNewField, lookupField } from 'tirest/fields'
 
 import styles from './hero.module.scss'
 
