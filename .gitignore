@@ -4,6 +4,7 @@
 /lib-types
 /server
 tmp
+vite.config.ts.timestamp*
 
 # Development
 node_modules
