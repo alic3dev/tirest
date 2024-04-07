@@ -6,7 +6,7 @@ import type {
 } from '@builder.io/qwik-city'
 import type { JSXOutput, Signal } from '@builder.io/qwik'
 
-import type { Score, ScoreError } from '~/components/profile/profile'
+import type { Score, ScoreError } from '~/types'
 
 import { component$ } from '@builder.io/qwik'
 import { routeLoader$ } from '@builder.io/qwik-city'
@@ -15,6 +15,7 @@ import { createKysely } from '@vercel/postgres-kysely'
 
 import { useAuthSession } from '~/routes/plugin@auth'
 import { Profile } from '~/components/profile'
+import { errors as errorMessages } from '~/utils/messages'
 
 export const onRequest: RequestHandler = async ({
   next,
@@ -31,30 +32,55 @@ export const onRequest: RequestHandler = async ({
   await next()
 }
 
-export const useLastTenScores = routeLoader$(
+export const useScoreData = routeLoader$(
   async (
     requestEvent: RequestEventLoader<QwikCityPlatform>,
-  ): Promise<Score[] | ScoreError> => {
+  ): Promise<{
+    lastTen: Score[] | ScoreError
+    topTen: Score[] | ScoreError
+  }> => {
     const session: (Session & { uuid: string }) | undefined =
       requestEvent.sharedMap.get('session')
 
-    if (!session) return []
+    if (!session) return { lastTen: [], topTen: [] }
 
-    let res
+    const res: { lastTen: Score[] | ScoreError; topTen: Score[] | ScoreError } =
+      { lastTen: [], topTen: [] }
+
+    const db = createKysely<Database.Alic3Dev>()
 
     try {
-      // throw new Error()
-      const db = createKysely<Database.Alic3Dev>()
-      res = await db
+      res.lastTen = await db
         .selectFrom('tirest_scores')
         .select(['game_id', 'level', 'score', 'submitted_timestamp'])
         .where('user_uuid', '=', session.uuid)
+        .orderBy('submitted_timestamp desc')
         .limit(10)
         .execute()
     } catch {
-      return requestEvent.fail(500, {
-        errorMessage: 'Whoops, something went wrong. :(',
-      })
+      res.lastTen = {
+        failed: true,
+        errorMessage: errorMessages.default,
+      }
+    }
+
+    try {
+      res.topTen = await db
+        .selectFrom('tirest_scores')
+        .select(['game_id', 'level', 'score', 'submitted_timestamp'])
+        .where('user_uuid', '=', session.uuid)
+        .orderBy('score desc')
+        .limit(10)
+        .execute()
+    } catch {
+      res.topTen = {
+        failed: true,
+        errorMessage: errorMessages.default,
+      }
+    }
+
+    if (!Array.isArray(res.lastTen) || !Array.isArray(res.topTen)) {
+      return requestEvent.fail(500, res)
     }
 
     return res
@@ -62,14 +88,21 @@ export const useLastTenScores = routeLoader$(
 )
 
 export default component$((): JSXOutput => {
-  const session: Readonly<Signal<Session | null>> = useAuthSession()
+  const session: Readonly<Signal<(Session & { display_name: string }) | null>> =
+    useAuthSession() as Readonly<Signal<Session & { display_name: string }>>
 
   const user: Partial<Required<DefaultSession>['user']> =
     session.value?.user ?? {}
 
-  const lastTenScores = useLastTenScores().value
+  const scoreData = useScoreData()
 
-  return <Profile user={user} scores={lastTenScores} />
+  return (
+    <Profile
+      user={user}
+      display_name={session.value?.display_name ?? ''}
+      scores={scoreData.value}
+    />
+  )
 })
 
 export const head: DocumentHead = {
