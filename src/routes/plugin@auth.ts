@@ -12,7 +12,7 @@ import Google from '@auth/core/providers/google'
 import { createKysely } from '@vercel/postgres-kysely'
 import { sql } from 'kysely'
 
-export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
+const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
   serverAuth$(
     ({ env }: { env: EnvGetter }): QwikAuthConfig => ({
       secret: env.get('AUTH_SECRET'),
@@ -32,6 +32,7 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
         //   clientSecret: env.get('GITHUB_SECRET')!,
         // }),
       ],
+
       callbacks: {
         jwt: async ({
           token,
@@ -43,9 +44,11 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
           if (trigger === 'signIn') {
             const db = createKysely<Database.Alic3Dev>()
 
-            let existingUser: { uuid: string } | undefined = await db
+            let existingUser:
+              | { uuid: string; display_name: string }
+              | undefined = await db
               .selectFrom('tirest_users')
-              .select('uuid')
+              .select(['uuid', 'display_name'])
               .where('sub', '=', token.sub!)
               .executeTakeFirst()
 
@@ -55,33 +58,41 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
                 .values({
                   uuid: sql`uuid_generate_v4()`,
                   sub: token.sub!,
+                  display_name: `User#${Math.random() * 1000000 + 10000}`,
                 })
                 .execute()
 
               existingUser = await db
                 .selectFrom('tirest_users')
-                .select('uuid')
+                .select(['uuid', 'display_name'])
                 .where('sub', '=', token.sub!)
                 .executeTakeFirst()
             }
 
             token.uuid = existingUser?.uuid
+            token.display_name = existingUser?.display_name
           }
 
           return token
         },
+
         session: async ({
           session,
           token,
         }: {
           session: Session
           token: JWT
-        }): Promise<Session & { uuid: string }> => {
+        }): Promise<Session & { uuid: string; display_name: string }> => {
+          // console.log(session)
+
           return {
             ...session,
             uuid: token.uuid as string,
+            display_name: token.display_name as string,
           }
         },
       },
     }),
   )
+
+export { onRequest, useAuthSession, useAuthSignin, useAuthSignout }
