@@ -1,7 +1,8 @@
-import type { RequestHandler } from '@builder.io/qwik-city'
 import type { Session } from '@auth/core/types'
+import type { RequestHandler } from '@builder.io/qwik-city'
+import type { InsertResult } from 'kysely'
 
-import { createKysely } from '@vercel/postgres-kysely'
+import { saveScoreToDatabase } from '~/utils/server/scores'
 
 export const onPost: RequestHandler = async ({
   next,
@@ -34,24 +35,17 @@ export const onPost: RequestHandler = async ({
     throw error(400, 'Invalid parameters.')
   }
 
-  console.log(req)
+  const { err }: { res?: InsertResult; err?: string } =
+    await saveScoreToDatabase({
+      user_uuid: session.uuid,
+      game_id: req.game_id,
+      level: req.level,
+      score: req.score,
+      client_ip: clientConn.ip ?? '127.0.0.1',
+    })
 
-  const db = createKysely<Database.Alic3Dev>()
-  try {
-    await db
-      .insertInto('tirest_scores')
-      .values({
-        user_uuid: session.uuid,
-        game_id: req.game_id,
-        level: req.level,
-        score: req.score,
-        client_ip: clientConn.ip ?? '127.0.0.1',
-      })
-      .executeTakeFirstOrThrow()
-  } catch {
-    throw error(500, 'Failed to save score.')
-  } finally {
-    db.destroy()
+  if (err) {
+    throw error(500, err)
   }
 
   json(200, { success: true })
