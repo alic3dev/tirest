@@ -39,6 +39,7 @@ export function generateNewTirest(tirest?: Tirest): Tirest {
 
     level: {
       number: 1,
+      speed: 1,
       linesToClear: 10,
     },
 

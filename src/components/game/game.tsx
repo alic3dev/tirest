@@ -76,7 +76,7 @@ export const Game = component$(() => {
     cleanup((): void => {
       window.cancelAnimationFrame(animationFrameHandle)
 
-      tirestUtils.off(tirest.value!, 'GAME_OVER', onGameOver)
+      tirestUtils.close(tirest.value!)
     })
   })
 

@@ -33,7 +33,7 @@ function getSynth(audioContext: AudioContext): Synth {
 
   const channel: Channel = getMainChannel(audioContext)
 
-  const bpm: number = 3
+  const bpm: number = 240
 
   _synth = new Synth(
     audioContext,
@@ -43,7 +43,22 @@ function getSynth(audioContext: AudioContext): Synth {
     false,
   )
   _synth.setBPM(bpm)
-  _synth.addOscillator('triangle', 0.25)
+  _synth.addOscillator('triangle', 0.5)
+
+  const synthOffset = new Synth(
+    audioContext,
+    undefined,
+    channel.destination,
+    undefined,
+    false,
+  )
+  synthOffset.setBPM(bpm)
+  synthOffset.removeOscillator(0)
+  synthOffset.addOscillator('triangle', 0.333)
+
+  synthOffset.setPortamento(0.025)
+  synthOffset.setHold(1)
+  synthOffset.setGainCurve([0, 0.3, 0.3, 0.0, 0.3, 0.75, 0.0, 0.3, 0.3, 0])
 
   const synthTwo = new Synth(
     audioContext,
@@ -72,25 +87,29 @@ function getSynth(audioContext: AudioContext): Synth {
     for (let i: number = 0; i < highNotes.length; i++) {
       if (!highNotes[i]) continue
 
-      _synth!.playNote(
-        // @ts-expect-error
+      const frequency: number = // @ts-expect-error
         noteTable[
           highNotes[i] === 'A' || highNotes[i] === 'B' || highNotes[i] === 'G#'
             ? 3
             : 4
-        ][highNotes[i]],
-        i,
-      )
+        ][highNotes[i]]
+      const offset: number = i ? i + (Math.sin(i * 6 + Math.PI / 2) + 1) / 4 : i //+ (Math.random() > 0.75 ? 0.6 : 0)
+
+      _synth!.playNote(frequency, offset)
+      synthOffset.playNote(frequency, offset + 0.1)
     }
 
     for (let i: number = 0; i < lowNotes.length; i++) {
       if (!lowNotes[i]) continue
+
+      const offset: number = i // ? i + (Math.sin(i * 4 + Math.PI / 2) + 1) / 6 : i //+ (Math.random() > 0.75 ? 0.6 : 0)
+
       synthTwo.playNote(
         // @ts-expect-error
         noteTable[lowNotes[i] === 'A' || lowNotes[i] === 'G#' ? 2 : 3][
           lowNotes[i]
         ],
-        i,
+        offset,
       )
     }
 
@@ -120,4 +139,13 @@ export function start(tirest: Tirest): void {
   }
 
   getSynth(audioContext)
+}
+
+export function stop(): void {
+  const audioContext: AudioContext = getAudioContext()
+  audioContext.close()
+
+  _audioContext = null
+  _mainChannel = null
+  _synth = null
 }

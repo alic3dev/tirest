@@ -13,7 +13,7 @@ import { lookupTirestinoQueue } from 'tirest/queues'
 import { lookupField } from 'tirest/fields'
 import { pauseMenu } from 'tirest/pauseMenu'
 import { gameOverMenu } from 'tirest/gameOverMenu'
-import { addEvents, removeEvents } from 'tirest/events'
+import { addEvents, removeEvents, clearEvents } from 'tirest/events'
 
 import _draw from 'tirest/draw'
 import _poll from 'tirest/poll'
@@ -212,4 +212,9 @@ export function draw(tirest: Tirest, ctx: CanvasRenderingContext2D): void {
   } else {
     tirest.selectedMenuItem = null
   }
+}
+
+export function close(tirest: Tirest) {
+  audio.stop()
+  clearEvents(tirest)
 }

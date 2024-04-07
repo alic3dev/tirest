@@ -1,7 +1,6 @@
 import type { Tirest } from 'tirest/types'
 
 export async function postScore(tirest: Tirest) {
-  console.log(tirest)
   fetch('/api/scores', {
     method: 'POST',
     body: JSON.stringify({
