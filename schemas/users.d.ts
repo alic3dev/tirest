@@ -6,6 +6,7 @@ declare global {
       id: ColumnType<Generated<number>, never, never>
       uuid: string
       sub: string
+      display_name: string
       created_timestamp: ColumnType<Date, never, never>
     }
   }
@@ -17,5 +18,6 @@ export {}
 //     id serial,
 //     uuid uuid,
 //     sub varchar(100),
+//     display_name varchar(100)
 //     submitted_timestamp timestamp default current_timestamp
 // );
