@@ -12,6 +12,27 @@ function checkBounds(
   field: Uint8Array,
   offset: Partial<Position> = { x: 0, y: 0 },
 ): boolean {
+  const _offset: Position = {
+    x: offset.x ?? 0,
+    y: offset.y ?? 0,
+  }
+
+  if (
+    tirestino.size.width + tirest.droppingFrom.x + _offset.x >
+      fieldSize.width ||
+    tirest.droppingFrom.x + _offset.x < 0
+  ) {
+    return true
+  }
+
+  if (
+    tirestino.size.height + tirest.droppingFrom.y + _offset.y >
+      fieldSize.height ||
+    tirest.droppingFrom.y + _offset.y < 0
+  ) {
+    return true
+  }
+
   for (let i: number = 0; i < tirestino.data.length; i++) {
     if (
       tirestino.data[i] &&
@@ -19,10 +40,10 @@ function checkBounds(
         fieldSize.width *
           (tirest.droppingFrom.y +
             Math.floor(i / tirestino.size.width) +
-            (offset.y ?? 0)) +
+            _offset.y) +
           tirest.droppingFrom.x +
           (i % tirestino.size.width) +
-          (offset.x ?? 0)
+          _offset.x
       ]
     ) {
       return true
@@ -152,9 +173,41 @@ export function pollPlaying(
       keysPressed.ArrowUp ? tirestino.rotateRightId : tirestino.rotateLeftId,
     )
 
-    if (!checkBounds(tirest, rotatedTirestino, field)) {
-      tirestino = rotatedTirestino
-      tirest.currentTirestinoId = tirestino.id
+    for (let i: number = 0; i < rotatedTirestino.size.width; i++) {
+      if (!checkBounds(tirest, rotatedTirestino, field, { x: -i })) {
+        tirestino = rotatedTirestino
+        tirest.currentTirestinoId = tirestino.id
+        tirest.droppingFrom.x = tirest.droppingFrom.x - i
+        tirest.hasRotated = true
+
+        break
+      }
+    }
+
+    if (!tirest.hasRotated) {
+      for (let i: number = 1; i < rotatedTirestino.size.width; i++) {
+        if (!checkBounds(tirest, rotatedTirestino, field, { x: i })) {
+          tirestino = rotatedTirestino
+          tirest.currentTirestinoId = tirestino.id
+          tirest.droppingFrom.x = tirest.droppingFrom.x + i
+          tirest.hasRotated = true
+
+          break
+        }
+      }
+    }
+
+    if (!tirest.hasRotated) {
+      for (let i: number = 1; i < rotatedTirestino.size.height; i++) {
+        if (!checkBounds(tirest, rotatedTirestino, field, { y: -i })) {
+          tirestino = rotatedTirestino
+          tirest.currentTirestinoId = tirestino.id
+          tirest.droppingFrom.y = tirest.droppingFrom.y - i
+          tirest.hasRotated = true
+
+          break
+        }
+      }
     }
 
     tirest.hasRotated = true
@@ -186,9 +239,13 @@ export function pollPlaying(
     tirest.prevInputTime = time
   }
 
+  const fallTime: number = AUTO_FALL_MS / tirest.level.speed
+
+  // TODO: Force a drop after X time based on falltime & height/yPosition
+
   if (
     time - tirest.prevAutoFallTime >
-    AUTO_FALL_MS - (keysPressed.ArrowDown ? AUTO_FALL_MS / 1.1 : 0)
+    fallTime - (keysPressed.ArrowDown ? fallTime / 1.1 : 0)
   ) {
     const boundingY: number = tirest.droppingFrom.y + tirestino.size.height
 
@@ -231,6 +288,7 @@ export function pollPlaying(
         if (currentLevelProgress.clearedLines >= tirest.level.linesToClear) {
           tirest.level = {
             number: tirest.level.number + 1,
+            speed: tirest.level.speed * 1.35,
             linesToClear: Math.floor(tirest.level.linesToClear * 1.15),
           }
 
