@@ -40,5 +40,9 @@ export function cascadingDifferenceDisplay(
     }
   }
 
+  if (!timeSince) {
+    timeSince = 'Today'
+  }
+
   return `${timeSince}`
 }
