@@ -1,13 +1,17 @@
-import type { UUID } from 'crypto'
 import type { JSXOutput } from '@builder.io/qwik'
 import type { Tirest, Size } from 'tirest/types'
 
-import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
+import {
+  $,
+  component$,
+  useOnWindow,
+  useSignal,
+  useVisibleTask$,
+} from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 
 import { drawBlock } from 'tirest/draw'
 import { colorPalettes } from 'tirest/colorPalettes'
-import { generateNewField, lookupField } from 'tirest/fields'
 
 import styles from './hero.module.scss'
 
@@ -21,18 +25,64 @@ const _fieldSize: Size = {
   height: 20,
 }
 
-export default component$((): JSXOutput => {
+export const Hero = component$((): JSXOutput => {
   const canvasRef = useSignal<HTMLCanvasElement>()
-  const fieldId = useSignal<UUID>()
+
+  const canvasResolution = useSignal<Size>(CANVAS_RESOLUTION)
+  const fieldSize = useSignal<Size>(_fieldSize)
+
+  const setCanvasResolution = $(
+    (ctx: CanvasRenderingContext2D | null): void => {
+      if (window.innerHeight < window.innerWidth) {
+        if (canvasResolution.value.width === CANVAS_RESOLUTION.width) return
+
+        canvasResolution.value = {
+          width: CANVAS_RESOLUTION.width,
+          height: CANVAS_RESOLUTION.height,
+        }
+
+        fieldSize.value = {
+          width: _fieldSize.width,
+          height: _fieldSize.height,
+        }
+      } else {
+        if (canvasResolution.value.width === CANVAS_RESOLUTION.height) return
+
+        canvasResolution.value = {
+          width: CANVAS_RESOLUTION.height,
+          height: CANVAS_RESOLUTION.width,
+        }
+
+        fieldSize.value = {
+          width: _fieldSize.height,
+          height: _fieldSize.width,
+        }
+      }
+
+      if (!canvasRef.value) return
+
+      if (!ctx) {
+        ctx = canvasRef.value.getContext('2d', { willReadFrequently: true })
+
+        if (!ctx) return
+      }
+
+      ctx.canvas.width = canvasResolution.value.width
+      ctx.canvas.height = canvasResolution.value.height
+
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    },
+  )
+
+  useOnWindow(
+    'resize',
+    $(() => setCanvasResolution(null)),
+  )
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(
     ({ track, cleanup }): void => {
       track(canvasRef)
-
-      if (!fieldId.value) {
-        fieldId.value = generateNewField(_fieldSize)
-      }
 
       if (!canvasRef.value) return
 
@@ -43,20 +93,19 @@ export default component$((): JSXOutput => {
 
       if (!ctx) return
 
+      setCanvasResolution(ctx)
+
       let animationFrameHandle: number
       let prevTime: number = 0
       let prevTimeEarly: number = 0
 
       const animationFrame = (time: DOMHighResTimeStamp): void => {
-        const field: Uint8Array = lookupField({
-          fieldId: fieldId.value,
-        } as Tirest)
         const elapsedTime: number = time - prevTime
         const elapsedTimeEarly: number = time - prevTimeEarly
 
         // TODO: Drop pattern instead
 
-        const prevStateImageData = ctx.getImageData(
+        const prevStateImageData: ImageData = ctx.getImageData(
           0,
           0,
           ctx.canvas.width,
@@ -82,12 +131,12 @@ export default component$((): JSXOutput => {
           return
         }
 
-        const blockSize = ctx.canvas.width / _fieldSize.width
+        const blockSize: number = ctx.canvas.width / fieldSize.value.width
+        const fieldLength: number =
+          fieldSize.value.width * fieldSize.value.height
 
-        const heightOffset = ctx.canvas.height - blockSize * _fieldSize.height
-
-        for (let i: number = 0; i < field.length; i++) {
-          const xVal = i % _fieldSize.width
+        for (let i: number = 0; i < fieldLength; i++) {
+          const xVal = i % fieldSize.value.width
 
           if ((xVal > 10 && xVal < 30) || Math.random() > 0.0001) continue
 
@@ -97,7 +146,9 @@ export default component$((): JSXOutput => {
             Math.floor(Math.random() * 5 + 1),
             {
               x: blockSize * xVal,
-              y: heightOffset + blockSize * Math.floor(i / _fieldSize.width),
+              y:
+                blockSize *
+                Math.floor((ctx.canvas.height / blockSize) * Math.random()),
             },
             { width: blockSize, height: blockSize },
           )
@@ -119,8 +170,8 @@ export default component$((): JSXOutput => {
     <div class={['container', styles.hero]}>
       <canvas
         ref={canvasRef}
-        height={CANVAS_RESOLUTION.height}
-        width={CANVAS_RESOLUTION.width}
+        height={canvasResolution.value.height}
+        width={canvasResolution.value.width}
         class={styles.canvas}
       ></canvas>
 
@@ -130,7 +181,7 @@ export default component$((): JSXOutput => {
         to have <span class="highlight">you</span> here
       </h1>
 
-      {/* <p>Tired.. Tirest.. Tertis.. Tet.. ris?</p> */}
+      <p>Tired.. Tirest.. Tertis.. Tet.. ris?</p>
 
       <p>Have fun.</p>
       <div class={styles['button-group']}>
