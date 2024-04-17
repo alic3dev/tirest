@@ -5,6 +5,7 @@ import type { InsertResult } from 'kysely'
 import { saveScoreToDatabase } from '~/utils/server/scores'
 
 export const onPost: RequestHandler = async ({
+  env,
   next,
   sharedMap,
   json,
@@ -42,6 +43,7 @@ export const onPost: RequestHandler = async ({
       level: req.level,
       score: req.score,
       client_ip: clientConn.ip ?? '127.0.0.1',
+      env,
     })
 
   if (err) {

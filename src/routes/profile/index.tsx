@@ -47,7 +47,9 @@ export const useScoreData = routeLoader$(
     const res: { lastTen: Score[] | ScoreError; topTen: Score[] | ScoreError } =
       { lastTen: [], topTen: [] }
 
-    const db = createKysely<Database.Alic3Dev>()
+    const db = createKysely<Database.Alic3Dev>({
+      connectionString: requestEvent.env.get('POSTGRES_URL'),
+    })
 
     try {
       res.lastTen = await db
