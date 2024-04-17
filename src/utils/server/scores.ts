@@ -137,7 +137,9 @@ export async function saveScoreToDatabase({
   client_ip: string
   env: EnvGetter
 }): Promise<{ res?: InsertResult; err?: string }> {
-  const db = createKysely<Database.Alic3Dev>()
+  const db = createKysely<Database.Alic3Dev>({
+    connectionString: env.get('POSTGRES_URL'),
+  })
 
   let res: InsertResult | undefined
   let err: string | undefined
