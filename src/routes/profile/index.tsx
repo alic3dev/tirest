@@ -14,7 +14,7 @@ import { routeLoader$ } from '@builder.io/qwik-city'
 import { createKysely } from '@vercel/postgres-kysely'
 
 // import { useAuthSession } from '~/routes/plugin@auth'
-import { Profile } from '~/components/profile/Profile'
+// import { Profile } from '~/components/profile/Profile'
 import { errors as errorMessages } from '~/utils/messages'
 
 export const onRequest: RequestHandler = async ({
@@ -95,14 +95,15 @@ export default component$((): JSXOutput => {
   //   session.value?.user ?? {}
 
   // const scoreData = useScoreData()
+  return <>Test</>
 
-  return (
-    <Profile
-    // user={user}
-    // display_name={session.value?.display_name ?? ''}
-    // scores={scoreData.value}
-    />
-  )
+  // return (
+  //   <Profile
+  //   // user={user}
+  //   // display_name={session.value?.display_name ?? ''}
+  //   // scores={scoreData.value}
+  //   />
+  // )
 })
 
 export const head: DocumentHead = {
