@@ -1,7 +1,7 @@
-import type { DefaultSession } from '@auth/core/types'
+// import type { DefaultSession } from '@auth/core/types'
 import type { JSXOutput } from '@builder.io/qwik'
 
-import type { Score, ScoreError } from '~/types'
+// import type { Score, ScoreError } from '~/types'
 
 import { component$ /*, useSignal, useVisibleTask$*/ } from '@builder.io/qwik'
 
@@ -15,9 +15,12 @@ export const Profile = component$(
     display_name,
     scores,
   }: {
-    user: Partial<Required<DefaultSession>['user']>
-    display_name: string
-    scores: { lastTen: Score[] | ScoreError; topTen: Score[] | ScoreError }
+    user: any
+    display_name: any
+    scores: any
+    // user: Partial<Required<DefaultSession>['user']>
+    // display_name: string
+    // scores: { lastTen: Score[] | ScoreError; topTen: Score[] | ScoreError }
   }): JSXOutput => {
     // const previousDisplayName = useSignal<string>(display_name)
     // const displayName = useSignal<string>(display_name)
