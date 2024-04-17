@@ -76,7 +76,7 @@ export const Profile = component$(
               <span class="icon icon-pencil" title="Edit display name" />
             </h3>
             <div class={styles['profile-image-wrapper']}>
-              {user.image && <img src={user.image} height={96} width={96} />}
+              {user.image && <img src={user.image!} height={96} width={96} />}
             </div>
             <label>
               Name
