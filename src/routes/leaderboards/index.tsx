@@ -30,7 +30,7 @@ export const useGetLeaderboard = routeLoader$(
     requestEvent: RequestEventLoader<QwikCityPlatform>,
   ): Promise<ScoreWithUser[] | ScoreError> => {
     const { res, err }: { res?: ScoreWithUser[]; err?: string } =
-      await getLeaderboardCache()
+      await getLeaderboardCache({ env: requestEvent.env })
 
     if (res) return res
 

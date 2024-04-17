@@ -1,3 +1,5 @@
+import type { EnvGetter } from '@builder.io/qwik-city/middleware/request-handler'
+
 import type { ScoreWithUser } from '~/types'
 
 import { createKysely } from '@vercel/postgres-kysely'
@@ -7,7 +9,11 @@ import { errors as errorMessages } from '~/utils/messages'
 
 let leaderboardCache: ScoreWithUser[] | undefined
 
-export async function getLeaderboardCache(): Promise<{
+export async function getLeaderboardCache({
+  env,
+}: {
+  env: EnvGetter
+}): Promise<{
   res?: ScoreWithUser[]
   err?: string
 }> {
@@ -16,7 +22,9 @@ export async function getLeaderboardCache(): Promise<{
   let res: ScoreWithUser[] | undefined
   let err: string | undefined
 
-  const db = createKysely<Database.Alic3Dev>()
+  const db = createKysely<Database.Alic3Dev>({
+    connectionString: env.get('POSTGRES_URL'),
+  })
 
   try {
     res = await db
@@ -49,8 +57,9 @@ export async function getLeaderboardCache(): Promise<{
 export async function updateLeaderboardCacheDisplayName(
   uuid: string,
   displayName: string,
+  env: EnvGetter,
 ) {
-  const { res }: { res?: ScoreWithUser[] } = await getLeaderboardCache()
+  const { res }: { res?: ScoreWithUser[] } = await getLeaderboardCache({ env })
 
   if (
     !Array.isArray(res) ||
@@ -76,8 +85,9 @@ export async function updateLeaderboardCacheDisplayName(
 
 async function updateLeaderboardCache(
   newScoreWithUser: ScoreWithUser,
+  env: EnvGetter,
 ): Promise<void> {
-  const { res }: { res?: ScoreWithUser[] } = await getLeaderboardCache()
+  const { res }: { res?: ScoreWithUser[] } = await getLeaderboardCache({ env })
 
   if (
     !Array.isArray(res) ||
@@ -118,12 +128,14 @@ export async function saveScoreToDatabase({
   level,
   score,
   client_ip,
+  env,
 }: {
   user_uuid: string
   game_id: string
   level: number
   score: number
   client_ip: string
+  env: EnvGetter
 }): Promise<{ res?: InsertResult; err?: string }> {
   const db = createKysely<Database.Alic3Dev>()
 
@@ -163,7 +175,7 @@ export async function saveScoreToDatabase({
       .limit(1)
       .execute()
 
-    updateLeaderboardCache(newScoreWithUser[0])
+    updateLeaderboardCache(newScoreWithUser[0], env)
   } catch (_err) {
     console.error(_err)
   }

@@ -42,7 +42,9 @@ const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
           trigger?: 'signIn' | 'signUp' | 'update'
         }): Promise<JWT> => {
           if (trigger === 'signIn') {
-            const db = createKysely<Database.Alic3Dev>()
+            const db = createKysely<Database.Alic3Dev>({
+              connectionString: env.get('POSTGRES_URL'),
+            })
 
             let existingUser:
               | { uuid: string; display_name: string }

@@ -5,6 +5,7 @@ import { createKysely } from '@vercel/postgres-kysely'
 import { updateLeaderboardCacheDisplayName } from '~/utils/server/scores'
 
 export const onPost: RequestHandler = async ({
+  env,
   next,
   sharedMap,
   json,
@@ -34,7 +35,9 @@ export const onPost: RequestHandler = async ({
     throw error(400, 'Display name too long.')
   }
 
-  const db = createKysely<Database.Alic3Dev>()
+  const db = createKysely<Database.Alic3Dev>({
+    connectionString: env.get('POSTGRES_URL'),
+  })
   try {
     await db
       .updateTable('tirest_users')
@@ -49,7 +52,7 @@ export const onPost: RequestHandler = async ({
     db.destroy()
   }
 
-  await updateLeaderboardCacheDisplayName(session.uuid, req.display_name)
+  await updateLeaderboardCacheDisplayName(session.uuid, req.display_name, env)
 
   json(200, { success: true })
 }
