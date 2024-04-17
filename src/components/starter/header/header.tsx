@@ -1,3 +1,4 @@
+import type { Session } from '@auth/core/types'
 import type { JSXOutput } from '@builder.io/qwik'
 
 import { component$, useSignal } from '@builder.io/qwik'
@@ -8,11 +9,12 @@ import { useAuthSession, useAuthSignout } from '~/routes/plugin@auth'
 
 import styles from './header.module.scss'
 
-export default component$((): JSXOutput => {
+export default component$(({ session }: { session?: Session }): JSXOutput => {
   const showLoginModal = useSignal<boolean>(false)
   const showRegisterModal = useSignal<boolean>(false)
 
-  const session = useAuthSession()
+  const __session = useAuthSession()
+  const _session = session ?? __session.value
   const signOut = useAuthSignout()
 
   return (
@@ -26,7 +28,7 @@ export default component$((): JSXOutput => {
             <Link href="/leaderboards">Leaderboards</Link>
           </li>
 
-          {session.value ? (
+          {_session ? (
             <>
               <li>
                 <Link href="/profile">Profile</Link>
