@@ -7,7 +7,7 @@ import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
 
 import { ScoreTable } from '~/components/profile/ScoreTable'
 
-import styles from '~/components/profile/Profile.module.scss'
+import styles from './Profile.module.scss'
 
 export const Profile = component$(
   ({
