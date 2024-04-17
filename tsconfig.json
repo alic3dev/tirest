@@ -20,9 +20,9 @@
     "paths": {
       "~/*": ["./src/*"],
       "tirest": ["./src/tirest"],
-      "tirest/*": ["./src/tirest/*"],
-    },
+      "tirest/*": ["./src/tirest/*"]
+    }
   },
   "files": ["./.eslintrc.cjs"],
-  "include": ["src", "./*.d.ts", "./*.config.ts"],
+  "include": ["src", "schemas", "./*.d.ts", "./*.config.ts"]
 }

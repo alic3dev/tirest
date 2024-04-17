@@ -22,7 +22,9 @@ export default component$((): JSXOutput => {
           <Link href="/">Tirest</Link>
         </h3>
         <ul>
-          <li>Leaderboards</li>
+          <li>
+            <Link href="/leaderboards">Leaderboards</Link>
+          </li>
 
           {session.value ? (
             <>

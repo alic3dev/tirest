@@ -1,0 +1,33 @@
+@use './shared.module.scss';
+
+.scores {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 90%;
+  padding: 0 5%;
+}
+
+.scores-table {
+  background: rgba(0, 0, 0, 0.25);
+
+  padding: 0.5rem 1rem;
+
+  text-align: center;
+
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+  border-spacing: 0px;
+
+  th {
+    padding-bottom: 0.5rem;
+
+    border-bottom: solid 1px #ccc;
+  }
+
+  tbody tr td {
+    padding-top: 0.5rem;
+  }
+}

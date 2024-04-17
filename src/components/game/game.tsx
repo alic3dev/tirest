@@ -1,5 +1,6 @@
 import type { Tirest, Size } from 'tirest/types'
 
+import type { Signal } from '@builder.io/qwik'
 import {
   $,
   component$,
@@ -8,9 +9,13 @@ import {
   useStore,
   useVisibleTask$,
 } from '@builder.io/qwik'
+
+import { useAuthSession } from '~/routes/plugin@auth'
+
 import * as tirestUtils from 'tirest'
 
 import styles from './game.module.scss'
+import type { Session } from '@auth/core/types'
 
 const CANVAS_RESOLUTION: Size = {
   width: 1440,
@@ -18,6 +23,8 @@ const CANVAS_RESOLUTION: Size = {
 }
 
 export const Game = component$(() => {
+  const session: Readonly<Signal<Session | null>> = useAuthSession()
+
   const tirest = useSignal<Tirest>()
   const canvasRef = useSignal<HTMLCanvasElement>()
   const keysPressed = useStore<Record<string, boolean>>({})
@@ -48,6 +55,14 @@ export const Game = component$(() => {
 
     if (!tirest.value) tirest.value = tirestUtils.getNew()
 
+    const onGameOver = (): void => {
+      if (session.value) {
+        tirestUtils.network.postScore(tirest.value!)
+      }
+    }
+
+    tirestUtils.on(tirest.value, 'GAME_OVER', onGameOver)
+
     let animationFrameHandle: number
 
     const animationFrame = (time: DOMHighResTimeStamp): void => {
@@ -58,7 +73,11 @@ export const Game = component$(() => {
     }
     animationFrameHandle = window.requestAnimationFrame(animationFrame)
 
-    cleanup((): void => window.cancelAnimationFrame(animationFrameHandle))
+    cleanup((): void => {
+      window.cancelAnimationFrame(animationFrameHandle)
+
+      tirestUtils.close(tirest.value!)
+    })
   })
 
   return (

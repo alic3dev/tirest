@@ -1,17 +1,17 @@
-import type { Tirest, Settings } from 'tirest/types'
+import type { Tirest, Settings, Events } from 'tirest/types'
 
 import { generateNewField } from 'tirest/fields'
 import { generateNewTirestinoQueue } from 'tirest/queues'
 import { fieldSize, INPUT_DELAY_MS } from 'tirest/constants'
 import { standard } from 'tirest/colorPalettes'
-
+import { addEvents, clearEvents } from 'tirest/events'
 import * as settings from 'tirest/settings'
 
-export function generateNewTirest(): Tirest {
+export function generateNewTirest(tirest?: Tirest): Tirest {
   const savedSettings: Partial<Settings> = settings.load()
 
-  return {
-    score: 0,
+  const newTirest: Tirest = {
+    id: crypto.randomUUID(),
 
     fieldId: generateNewField(),
     tirestinoQueueId: generateNewTirestinoQueue(),
@@ -39,6 +39,7 @@ export function generateNewTirest(): Tirest {
 
     level: {
       number: 1,
+      speed: 1,
       linesToClear: 10,
     },
 
@@ -66,4 +67,11 @@ export function generateNewTirest(): Tirest {
       ...savedSettings,
     },
   }
+
+  if (tirest) {
+    const previousEvents: Events = clearEvents(tirest)
+    addEvents(newTirest, previousEvents)
+  }
+
+  return newTirest
 }
