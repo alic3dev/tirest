@@ -6,7 +6,7 @@ import { component$ } from '@builder.io/qwik'
 
 import { cascadingDifferenceDisplay } from '~/utils/dates'
 
-import styles from './ScoreTable.module.scss'
+import styles from './scoreTable.module.scss'
 
 export const ScoreTable = component$(
   ({

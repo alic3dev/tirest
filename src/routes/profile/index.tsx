@@ -14,7 +14,7 @@ import { routeLoader$ } from '@builder.io/qwik-city'
 import { createKysely } from '@vercel/postgres-kysely'
 
 import { useAuthSession } from '~/routes/plugin@auth'
-import { Profile } from '../../components/profile/Profile'
+import { Profile } from '~/components/profile/profile'
 import { errors as errorMessages } from '~/utils/messages'
 
 export const onRequest: RequestHandler = async ({
