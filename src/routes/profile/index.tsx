@@ -1,10 +1,10 @@
-import type { DefaultSession, Session } from '@auth/core/types'
+import type { /*DefaultSession,*/ Session } from '@auth/core/types'
 import type {
   RequestEventLoader,
   DocumentHead,
   RequestHandler,
 } from '@builder.io/qwik-city'
-import type { JSXOutput, Signal } from '@builder.io/qwik'
+import type { JSXOutput /*, Signal*/ } from '@builder.io/qwik'
 
 import type { Score, ScoreError } from '~/types'
 
@@ -13,7 +13,7 @@ import { routeLoader$ } from '@builder.io/qwik-city'
 
 import { createKysely } from '@vercel/postgres-kysely'
 
-import { useAuthSession } from '~/routes/plugin@auth'
+// import { useAuthSession } from '~/routes/plugin@auth'
 import { Profile } from '~/components/profile/Profile'
 import { errors as errorMessages } from '~/utils/messages'
 
@@ -88,19 +88,19 @@ export const useScoreData = routeLoader$(
 )
 
 export default component$((): JSXOutput => {
-  const session: Readonly<Signal<(Session & { display_name: string }) | null>> =
-    useAuthSession() as Readonly<Signal<Session & { display_name: string }>>
+  // const session: Readonly<Signal<(Session & { display_name: string }) | null>> =
+  //   useAuthSession() as Readonly<Signal<Session & { display_name: string }>>
 
-  const user: Partial<Required<DefaultSession>['user']> =
-    session.value?.user ?? {}
+  // const user: Partial<Required<DefaultSession>['user']> =
+  //   session.value?.user ?? {}
 
-  const scoreData = useScoreData()
+  // const scoreData = useScoreData()
 
   return (
     <Profile
-      user={user}
-      display_name={session.value?.display_name ?? ''}
-      scores={scoreData.value}
+    // user={user}
+    // display_name={session.value?.display_name ?? ''}
+    // scores={scoreData.value}
     />
   )
 })
