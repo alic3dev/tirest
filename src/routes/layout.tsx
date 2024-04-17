@@ -1,8 +1,11 @@
-import type { JSXOutput } from '@builder.io/qwik'
+import type { Session } from '@auth/core/types'
+import type { JSXOutput, Signal } from '@builder.io/qwik'
 import type { RequestHandler } from '@builder.io/qwik-city'
 
 import { component$, Slot, useStyles$ } from '@builder.io/qwik'
 import { routeLoader$ } from '@builder.io/qwik-city'
+
+import { useAuthSession } from '../routes/plugin@auth'
 
 import Header from '../components/starter/header/header'
 import Footer from '../components/starter/footer/footer'
@@ -27,10 +30,13 @@ export const useServerTimeLoader = routeLoader$(() => {
 })
 
 export default component$((): JSXOutput => {
+  const session: Readonly<Signal<Session | null>> =
+    useAuthSession() as Readonly<Signal<Session>>
+
   useStyles$(styles)
   return (
     <>
-      <Header />
+      <Header session={session.value || undefined} />
       <main>
         <Slot />
       </main>
