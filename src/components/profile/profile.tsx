@@ -5,15 +5,15 @@ import type { Score, ScoreError } from '~/types'
 
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
 
-import { ScoreTable } from '~/components/profile/ScoreTable'
+// import { ScoreTable } from '~/components/profile/ScoreTable'
 
-import styles from './Profile.module.scss'
+// import styles from './Profile.module.scss'
 
 export const Profile = component$(
   ({
-    user,
+    // user,
     display_name,
-    scores,
+    // scores,
   }: {
     user: Partial<Required<DefaultSession>['user']>
     display_name: string
@@ -22,7 +22,7 @@ export const Profile = component$(
     const previousDisplayName = useSignal<string>(display_name)
     const displayName = useSignal<string>(display_name)
 
-    const currentDate = useSignal<Date>((): Date => new Date())
+    // const currentDate = useSignal<Date>((): Date => new Date())
 
     // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(({ track, cleanup }) => {
@@ -56,52 +56,54 @@ export const Profile = component$(
       })
     })
 
-    return (
-      <div class={styles.profile}>
-        <h2 class={styles.header}>Profile</h2>
+    return <>Test </>
 
-        <div class={styles.content}>
-          <div class={styles.section}>
-            <h3 class={styles.title}>
-              <span
-                contentEditable="true"
-                onInput$={(event) => {
-                  const elem: HTMLSpanElement = event.target as HTMLSpanElement
+    // return (
+    //   <div class={styles.profile}>
+    //     <h2 class={styles.header}>Profile</h2>
 
-                  displayName.value = elem.innerText
-                }}
-              >
-                {display_name}
-              </span>
-              <span class="icon icon-pencil" title="Edit display name" />
-            </h3>
-            <div class={styles['profile-image-wrapper']}>
-              {user.image && <img src={user.image!} height={96} width={96} />}
-            </div>
-            <label>
-              Name
-              <input type="text" value={user.name} disabled />
-            </label>
-            <label>
-              Email
-              <input type="text" value={user.email} disabled />
-            </label>
-          </div>
+    //     <div class={styles.content}>
+    //       <div class={styles.section}>
+    //         <h3 class={styles.title}>
+    //           <span
+    //             contentEditable="true"
+    //             onInput$={(event) => {
+    //               const elem: HTMLSpanElement = event.target as HTMLSpanElement
 
-          <div class={styles.section}>
-            <ScoreTable
-              title="Top 10 scores"
-              scores={scores.topTen}
-              currentDate={currentDate.value}
-            />
-            <ScoreTable
-              title="Last 10 scores"
-              scores={scores.lastTen}
-              currentDate={currentDate.value}
-            />
-          </div>
-        </div>
-      </div>
-    )
+    //               displayName.value = elem.innerText
+    //             }}
+    //           >
+    //             {display_name}
+    //           </span>
+    //           <span class="icon icon-pencil" title="Edit display name" />
+    //         </h3>
+    //         <div class={styles['profile-image-wrapper']}>
+    //           {user.image && <img src={user.image!} height={96} width={96} />}
+    //         </div>
+    //         <label>
+    //           Name
+    //           <input type="text" value={user.name} disabled />
+    //         </label>
+    //         <label>
+    //           Email
+    //           <input type="text" value={user.email} disabled />
+    //         </label>
+    //       </div>
+
+    //       <div class={styles.section}>
+    //         <ScoreTable
+    //           title="Top 10 scores"
+    //           scores={scores.topTen}
+    //           currentDate={currentDate.value}
+    //         />
+    //         <ScoreTable
+    //           title="Last 10 scores"
+    //           scores={scores.lastTen}
+    //           currentDate={currentDate.value}
+    //         />
+    //       </div>
+    //     </div>
+    //   </div>
+    // )
   },
 )
