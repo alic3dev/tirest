@@ -12,6 +12,46 @@ import Google from '@auth/core/providers/google'
 import { createKysely } from '@vercel/postgres-kysely'
 import { sql } from 'kysely'
 
+const displayNameLookup: Record<string, string> = {}
+
+export function setDisplayName({
+  uuid,
+  display_name,
+}: {
+  uuid: string
+  display_name: string | undefined
+}): void {
+  if (display_name) {
+    displayNameLookup[uuid] = display_name
+  } else {
+    delete displayNameLookup[uuid]
+  }
+}
+
+export async function getDisplayName({
+  env,
+  uuid,
+}: {
+  env: EnvGetter
+  uuid: string
+}): Promise<string | undefined> {
+  if (displayNameLookup[uuid]) return displayNameLookup[uuid]
+
+  const db = createKysely<Database.Alic3Dev>({
+    connectionString: env.get('POSTGRES_URL'),
+  })
+
+  const existingUser: { display_name: string } | undefined = await db
+    .selectFrom('tirest_users')
+    .select(['display_name'])
+    .where('uuid', '=', uuid)
+    .executeTakeFirst()
+
+  setDisplayName({ uuid, display_name: existingUser?.display_name })
+
+  return existingUser?.display_name
+}
+
 const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
   serverAuth$(
     ({ env }: { env: EnvGetter }): QwikAuthConfig => ({
@@ -46,11 +86,9 @@ const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
               connectionString: env.get('POSTGRES_URL'),
             })
 
-            let existingUser:
-              | { uuid: string; display_name: string }
-              | undefined = await db
+            let existingUser: { uuid: string } | undefined = await db
               .selectFrom('tirest_users')
-              .select(['uuid', 'display_name'])
+              .select(['uuid'])
               .where('sub', '=', token.sub!)
               .executeTakeFirst()
 
@@ -66,13 +104,12 @@ const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
 
               existingUser = await db
                 .selectFrom('tirest_users')
-                .select(['uuid', 'display_name'])
+                .select(['uuid'])
                 .where('sub', '=', token.sub!)
                 .executeTakeFirst()
             }
 
             token.uuid = existingUser?.uuid
-            token.display_name = existingUser?.display_name
           }
 
           return token
@@ -84,13 +121,12 @@ const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
         }: {
           session: Session
           token: JWT
-        }): Promise<Session & { uuid: string; display_name: string }> => {
+        }): Promise<Session & { uuid: string }> => {
           // console.log(session)
 
           return {
             ...session,
             uuid: token.uuid as string,
-            display_name: token.display_name as string,
           }
         },
       },

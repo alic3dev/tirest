@@ -3,6 +3,7 @@ import type { Session } from '@auth/core/types'
 
 import { createKysely } from '@vercel/postgres-kysely'
 import { updateLeaderboardCacheDisplayName } from '~/utils/server/scores'
+import { setDisplayName } from '~/routes/plugin@auth'
 
 export const onPost: RequestHandler = async ({
   env,
@@ -46,6 +47,8 @@ export const onPost: RequestHandler = async ({
       })
       .where('uuid', '=', session.uuid)
       .executeTakeFirst()
+
+    setDisplayName({ uuid: session.uuid, display_name: req.display_name })
   } catch {
     throw error(500, 'Failed to update display name.')
   } finally {

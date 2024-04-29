@@ -3,7 +3,7 @@ import type { JSXOutput } from '@builder.io/qwik'
 
 import type { Score, ScoreError } from '~/types'
 
-import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik'
+import { $, component$, useSignal } from '@builder.io/qwik'
 
 import { ScoreTable } from '~/components/profile/score-table'
 
@@ -19,41 +19,42 @@ export const Profile = component$(
     display_name: string
     scores: { lastTen: Score[] | ScoreError; topTen: Score[] | ScoreError }
   }): JSXOutput => {
-    const previousDisplayName = useSignal<string>(display_name)
     const displayName = useSignal<string>(display_name)
+    const displayNameInputRef = useSignal<HTMLInputElement>()
+
+    const editingName = useSignal<boolean>(false)
+    const submittingName = useSignal<boolean>(false)
+    const submitError = useSignal<boolean>(false)
 
     const currentDate = useSignal<Date>((): Date => new Date())
 
-    // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(({ track, cleanup }) => {
-      track(displayName)
+    const submitNewName = $((): void => {
+      if (!displayNameInputRef.value) return
 
-      let timeoutHandle: number
+      const newName: string = displayNameInputRef.value.value
 
-      const newName: string = displayName.value
+      submittingName.value = true
 
-      if (previousDisplayName.value !== newName) {
-        previousDisplayName.value = newName
-
-        timeoutHandle = window.setTimeout((): void => {
-          console.log(
-            fetch('/api/user', {
-              method: 'POST',
-              body: JSON.stringify({ display_name: newName }),
-            })
-              .then((res) => {
-                console.log(res)
-              })
-              .catch((err) => {
-                console.error(err)
-              }),
-          )
-        }, 2000)
-      }
-
-      cleanup(() => {
-        window.clearTimeout(timeoutHandle)
+      fetch('/api/user', {
+        method: 'POST',
+        body: JSON.stringify({ display_name: newName }),
       })
+        .then((res): void => {
+          console.log(res)
+
+          displayName.value = newName
+
+          editingName.value = false
+          submitError.value = false
+        })
+        .catch((err): void => {
+          console.error(err)
+
+          submitError.value = true
+        })
+        .finally((): void => {
+          submittingName.value = false
+        })
     })
 
     return (
@@ -62,19 +63,42 @@ export const Profile = component$(
 
         <div class={styles.content}>
           <div class={styles.section}>
-            <h3 class={styles.title}>
-              <span
-                contentEditable="true"
-                onInput$={(event) => {
-                  const elem: HTMLSpanElement = event.target as HTMLSpanElement
+            <div class={styles['display-name']}>Display Name</div>
+            {editingName.value ? (
+              <>
+                <div class={styles['edit-display-name']}>
+                  <input
+                    type="text"
+                    defaultValue={displayName.value}
+                    disabled={submittingName.value}
+                    ref={displayNameInputRef}
+                  />
+                  <button
+                    onClick$={submitNewName}
+                    disabled={submittingName.value}
+                  >
+                    Save
+                  </button>
+                </div>
 
-                  displayName.value = elem.innerText
-                }}
-              >
-                {display_name}
-              </span>
-              <span class="icon icon-pencil" title="Edit display name" />
-            </h3>
+                {submitError.value && (
+                  <p>Something went wrong, try submitting again.</p>
+                )}
+              </>
+            ) : (
+              <h3 class={styles.title}>
+                {displayName.value}
+
+                <span
+                  class={styles.edit}
+                  onClick$={() => (editingName.value = true)}
+                >
+                  Edit
+                  <span class="icon icon-pencil" title="Edit display name" />
+                </span>
+              </h3>
+            )}
+
             <div class={styles['profile-image-wrapper']}>
               {user.image && <img src={user.image!} height={96} width={96} />}
             </div>

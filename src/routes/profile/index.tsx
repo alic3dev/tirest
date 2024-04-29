@@ -8,12 +8,12 @@ import type { JSXOutput, Signal } from '@builder.io/qwik'
 
 import type { Score, ScoreError } from '~/types'
 
-import { component$ } from '@builder.io/qwik'
+import { component$, useSignal } from '@builder.io/qwik'
 import { routeLoader$ } from '@builder.io/qwik-city'
 
 import { createKysely } from '@vercel/postgres-kysely'
 
-import { useAuthSession } from '~/routes/plugin@auth'
+import { getDisplayName, useAuthSession } from '~/routes/plugin@auth'
 import { Profile } from '~/components/profile/profile'
 import { errors as errorMessages } from '~/utils/messages'
 
@@ -89,19 +89,33 @@ export const useScoreData = routeLoader$(
   },
 )
 
+export const useDisplayName = routeLoader$(
+  async (
+    requestEvent: RequestEventLoader<QwikCityPlatform>,
+  ): Promise<string | undefined> => {
+    const session: (Session & { uuid: string }) | undefined =
+      requestEvent.sharedMap.get('session')
+
+    if (!session) return
+
+    return getDisplayName({ env: requestEvent.env, uuid: session.uuid })
+  },
+)
+
 export default component$((): JSXOutput => {
-  const session: Readonly<Signal<(Session & { display_name: string }) | null>> =
-    useAuthSession() as Readonly<Signal<Session & { display_name: string }>>
+  const session: Readonly<Signal<Session | null>> =
+    useAuthSession() as Readonly<Signal<Session>>
 
   const user: Partial<Required<DefaultSession>['user']> =
     session.value?.user ?? {}
 
-  const scoreData = useScoreData()
+  const scoreData = useSignal(useScoreData().value)
+  const displayName = useSignal(useDisplayName().value)
 
   return (
     <Profile
       user={user}
-      display_name={session.value?.display_name ?? ''}
+      display_name={displayName.value || ''}
       scores={scoreData.value}
     />
   )

@@ -1,4 +1,12 @@
-@use './shared.module.scss';
+.title {
+  position: relative;
+
+  font-size: 2rem;
+
+  padding: 2rem 0;
+
+  text-align: center;
+}
 
 .scores {
   flex: 1;
