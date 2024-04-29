@@ -1,4 +1,62 @@
-@use './shared.module.scss';
+.title {
+  position: relative;
+
+  font-size: 2rem;
+
+  padding: 2rem 0;
+  padding-top: 1rem;
+
+  text-align: center;
+}
+
+.edit {
+  position: absolute;
+  left: calc(100% + 0.5rem);
+
+  padding-top: 0.25rem;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  & > span::before {
+    top: 4px;
+    transform: scale(0.5);
+  }
+}
+
+.display-name,
+.edit {
+  font-weight: 300;
+  font-size: 0.75rem;
+
+  color: #aaa;
+}
+
+.edit-display-name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 80px;
+
+  input {
+    height: 1rem;
+    border: 2px solid var(--qwik-light-blue);
+
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+
+  button {
+    height: calc(1rem + 6px);
+
+    padding: 2px 1rem;
+
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
 
 .profile {
   display: flex;
