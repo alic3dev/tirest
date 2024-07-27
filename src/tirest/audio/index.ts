@@ -20,7 +20,10 @@ const FULL_GAIN_VALUE: number = 0.2
 function getMainChannel(audioContext: AudioContext): Channel {
   if (_mainChannel) return _mainChannel
 
-  _mainChannel = new Channel(audioContext, audioContext.destination, false)
+  _mainChannel = new Channel({
+    audioContext,
+    withAnalyser: false,
+  })
   _mainChannel.gain.gain.value = FULL_GAIN_VALUE
 
   return _mainChannel
@@ -35,23 +38,19 @@ function getSynth(audioContext: AudioContext): Synth {
 
   const bpm: number = 240
 
-  _synth = new Synth(
+  _synth = new Synth({
     audioContext,
-    undefined,
-    channel.destination,
-    undefined,
-    false,
-  )
+    channel,
+    shouldSave: false,
+  })
   _synth.setBPM(bpm)
   _synth.addOscillator('triangle', 0.5)
 
-  const synthOffset = new Synth(
+  const synthOffset = new Synth({
     audioContext,
-    undefined,
-    channel.destination,
-    undefined,
-    false,
-  )
+    channel,
+    shouldSave: false,
+  })
   synthOffset.setBPM(bpm)
   synthOffset.removeOscillator(0)
   synthOffset.addOscillator('triangle', 0.333)
@@ -60,13 +59,11 @@ function getSynth(audioContext: AudioContext): Synth {
   synthOffset.setHold(1)
   synthOffset.setGainCurve([0, 0.3, 0.3, 0.0, 0.3, 0.75, 0.0, 0.3, 0.3, 0])
 
-  const synthTwo = new Synth(
+  const synthTwo = new Synth({
     audioContext,
-    undefined,
-    channel.destination,
-    undefined,
-    false,
-  )
+    channel,
+    shouldSave: false,
+  })
   synthTwo.addOscillator('triangle', 0.25)
 
   const highNotes: string[] =
